@@ -40,12 +40,24 @@ class Menu:
 class GestionProductos(tk.Toplevel):
     def __init__(self, *args, **kwargs):
         tk.Toplevel.__init__(self, *args, **kwargs)
-        self.geometry("600x600")
+        self.geometry("800x600")
         self.title('Gestión de productos')
+        self.widgets()
         self.grab_set()
 
     def widgets(self):
-        pass
+        self.columnconfigure(0, weight=1)
+        self.columnconfigure(1, weight=3)
+        frameIzquierda =tk.Frame(self)
+        frameDerecha = tk.Frame(self)
+
+        frameIzquierda.grid(row=0, column=0)
+        frameDerecha.grid(row=0, column=1)
+
+        boton1 = tk.Button(frameIzquierda, text="Hola")
+        boton1.pack(expand=True, fill='x')
+        boton2 = tk.Button(frameDerecha, text="Chau")
+        boton2.pack()
 
 
 
