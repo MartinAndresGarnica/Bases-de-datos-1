@@ -3,7 +3,7 @@ Create DATABASE sist_ventas;
 USE sist_ventas;
 
 CREATE TABLE PRODUCTO (
-	id_producto int primary key,
+	id_producto int AUTO_INCREMENT primary key,
     nombre_producto varchar(255) NOT NULL,
     precio decimal (10,2) NOT NULL CHECK(precio>0),
     descripcion varchar(255),
@@ -12,7 +12,7 @@ CREATE TABLE PRODUCTO (
 );
 
 CREATE TABLE CLIENTE (
-	id_cliente int primary key,
+	id_cliente int AUTO_INCREMENT primary key,
     nombre_cliente varchar(255) NOT NULL,
     apellido_cliente varchar(255) NOT NULL,
     telefono varchar(20) NOT NULL UNIQUE ,
@@ -21,7 +21,7 @@ CREATE TABLE CLIENTE (
 );
 
 CREATE TABLE ORDEN (
-	id_orden int primary key,
+	id_orden int AUTO_INCREMENT primary key,
     id_cliente int NOT NULL,
     fecha datetime NOT NULL,
     FOREIGN KEY (id_cliente) REFERENCES CLIENTE(id_cliente)
@@ -29,11 +29,11 @@ CREATE TABLE ORDEN (
 );
 
 CREATE TABLE ORDEN_PRODUCTO (
-	id_orden_producto int primary key,
     id_producto int NOT NULL,
     id_orden int NOT NULL,
     cantidad_producto int NOT NULL CHECK (cantidad_producto > 0),
     subtotal decimal NOT NULL CHECK (subtotal >= 0),
+    PRIMARY KEY (id_orden, id_producto),
     FOREIGN KEY (id_producto) REFERENCES PRODUCTO(id_producto)
 		ON DELETE CASCADE ON UPDATE CASCADE,
     FOREIGN KEY (id_orden) REFERENCES ORDEN(id_orden)
