@@ -1,6 +1,7 @@
 import customtkinter as ctk
 import tkinter as tk
 from GestionProductos import GestionProductos
+from GestionClientes import GestionClientes
 
 class Menu(ctk.CTk):
     def __init__(self, *args, **kwargs):
@@ -27,7 +28,8 @@ class Menu(ctk.CTk):
             self.frame,
             text='Gestionar clientes',
             font=('Arial', 18),
-            height= 80
+            height= 80,
+            command=lambda: GestionClientes(self)
         )
         boton_Gclientes.pack( padx=80, expand=True, fill='x')
 
