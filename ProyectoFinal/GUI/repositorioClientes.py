@@ -61,16 +61,21 @@ class DataBaseClientes:
 
     @staticmethod
     # Funcion para actualizar datos de un cliente "UPDATE"
-    def actualizar_cliente(self, id,nombre,apellido,direccion,telefono,email):
-        conn = DataBaseClientes.conexion()
-        cursor = conn.cursor()
-        sql= f"UPDATE FROM cliente WHERE id={id}"
-        valores=(nombre,apellido,direccion,telefono,email)
-        cursor.execute(sql,valores)
-        conn.commit()
-        cursor.close()
-        conn.close()
-        print("Cliente modificado con exito")
+    def actualizar_cliente(id,nombre,apellido,direccion,telefono,email):
+        try:
+            conn = DataBaseClientes.conexion()
+            cursor = conn.cursor()
+            sql= "UPDATE cliente SET nombre_cliente = %s, apellido_cliente= %s, direccion = %s, telefono = %s, email = %s WHERE id_cliente=%s"
+            valores=(nombre,apellido,direccion,telefono,email, id)
+            cursor.execute(sql,valores)
+            conn.commit()
+            return True
+        except Error as err:
+            print(f'Ocurrio un error: {err}')
+            return False
+        finally:
+            cursor.close()
+            conn.close()
     
     
     # Funcion para eliminar un cliente "DElETE"

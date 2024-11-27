@@ -13,22 +13,28 @@ class GestionClientes(ctk.CTkToplevel):
         self.grab_set()                         #Hace que la nueva ventana tenga prioridad y no se puedan clickear las demas ventanas
         self.columnconfigure(0, weight=1)
         self.columnconfigure(1, weight=2)
+
+        #Frames
         self.navbarFrame = ctk.CTkFrame(self) #Este frame es el que se encuentra primero, es el que contiene el boton de volver (de izquierda a derecha)
         self.agregarClientes = ctk.CTkFrame(self, fg_color='#2b2a2a') #Este frame tiene los widgets para agregar Clientes
         self.tablaClientes = ctk.CTkFrame(self) #Este frame tiene los widgets de la tabla
-
         self.frame_datos = ctk.CTkScrollableFrame(self.tablaClientes) #Este frame 
 
         #Layout general
         self.navbarFrame.pack(side='left', fill='y')
         self.agregarClientes.pack(side='left', fill='both')
         self.tablaClientes.pack(side='left', expand=True, fill='both')
+        self.frame_datos.pack(expand='true', fill='both')
 
         #Clientes
         self.lista_clientes = DataBaseClientes.cargarClientes()
 
         #Encabezados
         self.encabezados = []
+
+        #Menu desplegable
+        menu_desplegable = ctk.CTkOptionMenu(self.agregarClientes, values=['Agregar', 'Modificar'], command= self.agregar)
+        menu_desplegable.pack(padx = 70, pady= (50, 0))
 
         #Llamar a las funciones
         self.navbar()
@@ -43,37 +49,68 @@ class GestionClientes(ctk.CTkToplevel):
         boton_volver.pack()
 
 
-    def agregar(self):
+    def agregar(self, *args):
         """ Es el frame que maneja la logica de agregar Clientes. """
+
         #Variables
+        id_cliente = ctk.IntVar(value='')
         nombre = ctk.StringVar()
         apellido = ctk.StringVar()
         telefono = ctk.StringVar()
         direccion = ctk.StringVar()
         mail = ctk.StringVar()
 
+        #Elimina los widgets (ignorando los encabezados) en caso de haber para evitar duplicado de datos
+        for widget in self.agregarClientes.winfo_children():
+            if not isinstance(widget, ctk.CTkOptionMenu):
+                widget.destroy()
 
-        #Widgets
-        label_nombre = ctk.CTkLabel(self.agregarClientes, text='Nombre', font=('Arial', 20))
-        label_apellido = ctk.CTkLabel(self.agregarClientes, text='Apellido', font=('Arial', 20))
-        label_telefono = ctk.CTkLabel(self.agregarClientes, text='Telefono', font=('Arial', 20))
-        label_direccion = ctk.CTkLabel(self.agregarClientes, text='Direccion', font=('Arial', 20))
-        label_mail = ctk.CTkLabel(self.agregarClientes, text='Mail', font=('Arial', 20))
+        if 'Modificar' in args:
+            #Widgets
+            label_id = ctk.CTkLabel(self.agregarClientes, text='ID', font=('Arial', 20))
+            label_nombre = ctk.CTkLabel(self.agregarClientes, text='Nombre', font=('Arial', 20))
+            label_apellido = ctk.CTkLabel(self.agregarClientes, text='Apellido', font=('Arial', 20))
+            label_telefono = ctk.CTkLabel(self.agregarClientes, text='Telefono', font=('Arial', 20))
+            label_direccion = ctk.CTkLabel(self.agregarClientes, text='Direccion', font=('Arial', 20))
+            label_mail = ctk.CTkLabel(self.agregarClientes, text='Mail', font=('Arial', 20))
 
-        entry_nombre = ctk.CTkEntry(self.agregarClientes, width= 200, height=40, font=('Arial', 18), textvariable=nombre)
-        entry_apellido = ctk.CTkEntry(self.agregarClientes, width= 200, height=40, font=('Arial', 18), textvariable=apellido)
-        entry_telefono = ctk.CTkEntry(self.agregarClientes, width= 200, height=40, font=('Arial', 18), textvariable=telefono)
-        entry_direccion = ctk.CTkEntry(self.agregarClientes, width= 200, height=40, font=('Arial', 18), textvariable=direccion)
-        entry_mail = ctk.CTkEntry(self.agregarClientes, width= 200, height=40, font=('Arial', 18), textvariable=mail)
-        
-        frame_botones = ctk.CTkFrame(self.agregarClientes, fg_color='#2b2a2a')
-        boton_agregar = ctk.CTkButton(frame_botones, text='Agregar', font=('Arial', 20), fg_color='green', width= 180, height=40, command=lambda: self.guardarDatos(nombre, apellido, telefono, direccion, mail, entry_nombre, entry_apellido, entry_telefono, entry_direccion, entry_mail))
-        boton_modificar = ctk.CTkButton(frame_botones, text='Modificar', font=('Arial', 20), fg_color='blue', width= 180, height=40, command=lambda: self.modificarDatos(nombre, apellido, telefono, direccion, mail))
+            entry_id =  ctk.CTkEntry(self.agregarClientes, width=100, height=40, font=('Arial', 18), textvariable=id_cliente)
+            entry_nombre = ctk.CTkEntry(self.agregarClientes, width= 200, height=40, font=('Arial', 18), textvariable=nombre)
+            entry_apellido = ctk.CTkEntry(self.agregarClientes, width= 200, height=40, font=('Arial', 18), textvariable=apellido)
+            entry_telefono = ctk.CTkEntry(self.agregarClientes, width= 200, height=40, font=('Arial', 18), textvariable=telefono)
+            entry_direccion = ctk.CTkEntry(self.agregarClientes, width= 200, height=40, font=('Arial', 18), textvariable=direccion)
+            entry_mail = ctk.CTkEntry(self.agregarClientes, width= 200, height=40, font=('Arial', 18), textvariable=mail)
+            
+            frame_botones = ctk.CTkFrame(self.agregarClientes, fg_color='#2b2a2a')
+            boton_modificar = ctk.CTkButton(frame_botones, text='Modificar', font=('Arial', 20), fg_color='blue', width= 180, height=40, command=lambda: self.modificarDatos(id_cliente, nombre, apellido, telefono, direccion, mail, entry_id, entry_nombre, entry_apellido, entry_telefono, entry_direccion, entry_mail))
+        else:
+            label_id = None
+            label_nombre = ctk.CTkLabel(self.agregarClientes, text='Nombre', font=('Arial', 20))
+            label_apellido = ctk.CTkLabel(self.agregarClientes, text='Apellido', font=('Arial', 20))
+            label_telefono = ctk.CTkLabel(self.agregarClientes, text='Telefono', font=('Arial', 20))
+            label_direccion = ctk.CTkLabel(self.agregarClientes, text='Direccion', font=('Arial', 20))
+            label_mail = ctk.CTkLabel(self.agregarClientes, text='Mail', font=('Arial', 20))
+
+            entry_nombre = ctk.CTkEntry(self.agregarClientes, width= 200, height=40, font=('Arial', 18), textvariable=nombre)
+            entry_apellido = ctk.CTkEntry(self.agregarClientes, width= 200, height=40, font=('Arial', 18), textvariable=apellido)
+            entry_telefono = ctk.CTkEntry(self.agregarClientes, width= 200, height=40, font=('Arial', 18), textvariable=telefono)
+            entry_direccion = ctk.CTkEntry(self.agregarClientes, width= 200, height=40, font=('Arial', 18), textvariable=direccion)
+            entry_mail = ctk.CTkEntry(self.agregarClientes, width= 200, height=40, font=('Arial', 18), textvariable=mail)
+            
+            frame_botones = ctk.CTkFrame(self.agregarClientes, fg_color='#2b2a2a')
+            boton_agregar = ctk.CTkButton(frame_botones, text='Agregar', font=('Arial', 20), fg_color='green', width= 180, height=40, command=lambda: self.guardarDatos(nombre, apellido, telefono, direccion, mail, entry_nombre, entry_apellido, entry_telefono, entry_direccion, entry_mail))
 
 
         #layout del frame izquierdo
-        label_nombre.pack(padx = 70, pady=(100, 0))
-        entry_nombre.pack(padx = 70)
+        if label_id is not None:
+            label_id.pack(padx = 70, pady=(30, 0))
+            entry_id.pack(padx = 70, pady=5)
+
+            label_nombre.pack(padx = 70, pady=5)
+            entry_nombre.pack(padx = 70, pady=5)
+        else:
+            label_nombre.pack(padx = 70, pady=(50, 0))
+            entry_nombre.pack(padx = 70, pady=5)
 
         label_apellido.pack(padx = 70)
         entry_apellido.pack(padx = 70)
@@ -88,8 +125,11 @@ class GestionClientes(ctk.CTkToplevel):
         entry_mail.pack(padx = 70)
 
         frame_botones.pack()
-        boton_agregar.pack(side='left', padx=(10, 10), pady=(20, 0))
-        boton_modificar.pack(side='left', padx=(10, 10), pady=(20, 0))
+        if 'Modificar' in args:
+            boton_modificar.pack(side='left', padx=(10, 10), pady=(20, 0))
+        else:
+            boton_agregar.pack(side='left', padx=(10, 10), pady=(20, 0))
+
 
     def tabla(self):
         """ Funcion que se encarga de mostrar la tabla de Clientes. """
@@ -112,7 +152,6 @@ class GestionClientes(ctk.CTkToplevel):
         self.encabezados = [widget for widget in self.frame_datos.winfo_children() if isinstance(widget, ctk.CTkLabel)]
 
         #Layout
-        self.frame_datos.pack(expand='true', fill='both')
 
         label_id.grid(row=0, column=0, pady=20, sticky='we')
         label_nombre.grid(row=0 , column=1, pady=20, sticky='we')
@@ -127,6 +166,7 @@ class GestionClientes(ctk.CTkToplevel):
 
     def guardarDatos(self, *args):
         """ Funcion que se encarga de conectar la app con la base de datos. """
+
         #Variables
         nombre = args[0].get()
         apellido = args[1].get()
@@ -197,7 +237,77 @@ class GestionClientes(ctk.CTkToplevel):
 
 
     def modificarDatos(self, *args):
-        print('Modificar')
+        #Variables 
+        id = args[0].get()
+        nombre = args[1].get()
+        apellido = args[2].get()
+        telefono = args[3].get()
+        direccion = args[4].get()
+        mail = args[5].get()
+
+        #Validaciones
+        if id < 0:
+            mensaje = 'El id no puede ser menor a 0'
+            titulo = 'Error'
+        elif nombre == "" or nombre.isspace() or nombre.isdigit():
+            if nombre.isdigit():
+                mensaje='Error, el nombre no puede ser un numero.'
+                titulo = 'Error'
+            else:
+                mensaje='Error, el nombre no puede estar vacio.'
+                titulo = 'Error'
+        elif apellido == "" or apellido.isspace() or apellido.isdigit():
+            if apellido.isdigit():
+                mensaje='Error, el apellido no puede ser un numero.'
+                titulo = 'Error'
+            else:
+                mensaje='Error, el apellido no puede estar vacio.'
+                titulo = 'Error'
+        elif telefono == "" or telefono.isspace() or telefono.isdigit():
+            if telefono.isdigit():
+                mensaje='Error, el telefono debe llevar el + adelante.'
+                titulo = 'Error'
+            else:
+                mensaje='Error, el telefono no puede estar vacio.'
+                titulo = 'Error'
+        elif direccion == "" or direccion.isspace() or direccion.isdigit():
+            if direccion.isdigit():
+                mensaje='Error, la direccion no puede ser un numero.'
+                titulo = 'Error'
+            else:
+                mensaje='Error, la direccion no puede estar vacia.'
+                titulo = 'Error'
+        elif mail == "" or mail.isspace() or mail.isdigit() or '@' not in mail:
+            if mail.isdigit():
+                mensaje='Error, la mail no puede ser un numero.'
+                titulo = 'Error'
+            elif '@' not in mail:
+                mensaje='Mail invalido, debe contener un @.'
+                titulo = 'Error'
+            else:
+                mensaje='Error, la mail no puede estar vacia.'
+                titulo = 'Error'
+        else: 
+            if DataBaseClientes.actualizar_cliente(id, nombre, apellido, direccion, telefono, mail):
+                mensaje = 'Datos modificados correctamente'
+                titulo = 'Exito!'
+
+                self.lista_clientes = DataBaseClientes.cargarClientes()
+                self.obtenerDatos()
+
+                #Borrar el valor del entry
+                args[6].delete(0, 'end') #Borra el valor del entry_id desde la posicion 0 hasta el fin de la cadena de texto ingresada
+                args[7].delete(0, 'end')  #nombre_cliente
+                args[8].delete(0, 'end')  # apellido
+                args[9].delete(0, 'end')  #telefono
+                args[10].delete(0, 'end')  #direccion
+                args[11].delete(0, 'end')  #email
+
+            else:
+                mensaje = 'Hubo un error al modificar los datos o el id no existe.'
+                titulo = 'Error'
+        
+        CTkMessagebox.CTkMessagebox(title=titulo, message=mensaje)
 
 
     def obtenerDatos(self, *args):
