@@ -63,15 +63,20 @@ class DataBaseProductos:
     @staticmethod
     # Funcion para actualizar datos de un cliente "UPDATE"
     def actualizar_producto(id ,nombre_producto,precio,descripcion,stock,categoria):
-        conn = DataBaseProductos.conexion()
-        cursor = conn.cursor()
-        sql= "UPDATE FROM producto WHERE id={id}"
-        valores=(nombre_producto,precio,descripcion,stock,categoria)
-        cursor.execute(sql,valores)
-        conn.commit()
-        cursor.close()
-        conn.close()
-        print("Producto modificado con exito")
+        try:
+            conn = DataBaseProductos.conexion()
+            cursor = conn.cursor()
+            sql= "UPDATE producto SET nombre_producto = %s, precio= %s, descripcion = %s, stock = %s, categoria = %s WHERE id_producto=%s"
+            valores=(nombre_producto,precio,descripcion,stock,categoria, id)
+            cursor.execute(sql,valores)
+            conn.commit()
+            return True
+        except Error as err:
+            print(f'Ocurrio un error: {err}')
+            return False
+        finally: 
+            cursor.close()
+            conn.close()
     
     @staticmethod
     # Funcion para eliminar un cliente "DElETE"
