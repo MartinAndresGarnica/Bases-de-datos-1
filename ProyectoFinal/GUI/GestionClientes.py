@@ -17,7 +17,7 @@ class GestionClientes(ctk.CTkToplevel):
         self.agregarClientes = ctk.CTkFrame(self, fg_color='#2b2a2a') #Este frame tiene los widgets para agregar Clientes
         self.tablaClientes = ctk.CTkFrame(self) #Este frame tiene los widgets de la tabla
 
-        self.frame_datos = ctk.CTkScrollableFrame(self.tablaClientes)
+        self.frame_datos = ctk.CTkScrollableFrame(self.tablaClientes) #Este frame 
 
         #Layout general
         self.navbarFrame.pack(side='left', fill='y')
@@ -122,52 +122,52 @@ class GestionClientes(ctk.CTkToplevel):
         label_mail.grid(row=0 , column=5, pady=20, sticky='we')
 
         #
-        self.obtenerDatos(self.frame_datos)
+        self.obtenerDatos()
 
 
     def guardarDatos(self, *args):
         """ Funcion que se encarga de conectar la app con la base de datos. """
         #Variables
-        nombre = args[0]
-        apellido = args[1]
-        telefono = args[2]
-        direccion = args[3]
-        mail = args[4]
+        nombre = args[0].get()
+        apellido = args[1].get()
+        telefono = args[2].get()
+        direccion = args[3].get()
+        mail = args[4].get()
 
         #Validaciones
-        if nombre.get() == "" or nombre.get().isspace() or nombre.get().isdigit():
-            if nombre.get().isdigit():
+        if nombre == "" or nombre.isspace() or nombre.isdigit():
+            if nombre.isdigit():
                 mensaje='Error, el nombre no puede ser un numero.'
                 titulo = 'Error'
             else:
                 mensaje='Error, el nombre no puede estar vacio.'
                 titulo = 'Error'
-        elif apellido.get() == "" or apellido.get().isspace() or apellido.get().isdigit():
-            if apellido.get().isdigit():
+        elif apellido == "" or apellido.isspace() or apellido.isdigit():
+            if apellido.isdigit():
                 mensaje='Error, el apellido no puede ser un numero.'
                 titulo = 'Error'
             else:
                 mensaje='Error, el apellido no puede estar vacio.'
                 titulo = 'Error'
-        elif telefono.get() == "" or telefono.get().isspace() or telefono.get().isdigit():
-            if telefono.get().isdigit():
+        elif telefono == "" or telefono.isspace() or telefono.isdigit():
+            if telefono.isdigit():
                 mensaje='Error, el telefono debe llevar el + adelante.'
                 titulo = 'Error'
             else:
                 mensaje='Error, el telefono no puede estar vacio.'
                 titulo = 'Error'
-        elif direccion.get() == "" or direccion.get().isspace() or direccion.get().isdigit():
-            if direccion.get().isdigit():
+        elif direccion == "" or direccion.isspace() or direccion.isdigit():
+            if direccion.isdigit():
                 mensaje='Error, la direccion no puede ser un numero.'
                 titulo = 'Error'
             else:
                 mensaje='Error, la direccion no puede estar vacia.'
                 titulo = 'Error'
-        elif mail.get() == "" or mail.get().isspace() or mail.get().isdigit() or '@' not in mail.get():
-            if mail.get().isdigit():
+        elif mail == "" or mail.isspace() or mail.isdigit() or '@' not in mail:
+            if mail.isdigit():
                 mensaje='Error, la mail no puede ser un numero.'
                 titulo = 'Error'
-            elif '@' not in mail.get():
+            elif '@' not in mail:
                 mensaje='Mail invalido, debe contener un @.'
                 titulo = 'Error'
             else:
@@ -179,8 +179,11 @@ class GestionClientes(ctk.CTkToplevel):
                 mensaje = 'Cliente registrado correctamente.'
                 titulo = 'Exito!'
 
+                self.lista_clientes = DataBaseClientes.cargarClientes()
+                self.obtenerDatos()
+
                 #Borrar el valor del entry
-                args[5].delete(0, 'end')  #Borra el valor del entry nombre_producto desde la posicion 0 hasta el fin de la cadena de texto ingresada
+                args[5].delete(0, 'end')  #Borra el valor del entry nombre_cliente desde la posicion 0 hasta el fin de la cadena de texto ingresada
                 args[6].delete(0, 'end')  # apellido
                 args[7].delete(0, 'end')  #telefono
                 args[8].delete(0, 'end')  #direccion
@@ -199,7 +202,6 @@ class GestionClientes(ctk.CTkToplevel):
 
     def obtenerDatos(self, *args):
         """ Se encarga de la logica para mostrar los datos. """
-        self.frame_datos = args[0]
         eliminar_icon = ctk.CTkImage(light_image=Image.open('bin.png'), size=(40,40))
 
         #Elimina los widgets (ignorando los encabezados) en caso de haber para evitar duplicado de datos
@@ -211,20 +213,19 @@ class GestionClientes(ctk.CTkToplevel):
         for indice_producto, producto in enumerate(self.lista_clientes):
             for indice_dato, dato in enumerate(producto):
                 if (indice_producto+1) % 2 == 0:   #Esto es para que cada fila par tenga un color y cada fila impar tenga otro 
-                    label = ctk.CTkLabel(args[0], text=dato, font=('Arial', 20), bg_color='#5d5d5d') 
+                    label = ctk.CTkLabel(self.frame_datos, text=dato, font=('Arial', 20), bg_color='#5d5d5d') 
                 else:
-                    label = ctk.CTkLabel(args[0], text=dato, font=('Arial', 20), bg_color='#3d3d3d')
+                    label = ctk.CTkLabel(self.frame_datos, text=dato, font=('Arial', 20), bg_color='#3d3d3d')
                 label.grid(row=indice_producto+1, column=indice_dato, sticky='we', ipady=15) #Acomoda cada producto en una fila nueva, use como guia el indice del producto dentro de lista_Clientes
                 
-            boton_eliminar = ctk.CTkButton(args[0], image=eliminar_icon, text='', command=lambda id=producto[0]: self.eliminarCliente(id, self.frame_datos), fg_color='#F34235', width=50, height=28, hover_color='#F34235')
+            boton_eliminar = ctk.CTkButton(self.frame_datos, image=eliminar_icon, text='', command=lambda id=producto[0]: self.eliminarCliente(id), fg_color='#F34235', width=50, height=28, hover_color='#F34235')
             boton_eliminar.grid(row=indice_producto+1, column=len(producto), padx=0, pady=0)
 
         
     def eliminarCliente(self, *args):
         id = args[0]
-        self.frame_datos = args[1]
         if DataBaseClientes.eliminar_cliente(id):
             self.lista_clientes = DataBaseClientes.cargarClientes()
-            self.obtenerDatos(self.frame_datos)
+            self.obtenerDatos()
         else:
             CTkMessagebox.CTkMessagebox(message='Error al eliminar el cliente.', title='Error')

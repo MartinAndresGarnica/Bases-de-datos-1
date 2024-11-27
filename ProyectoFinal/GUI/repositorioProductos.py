@@ -31,19 +31,26 @@ class DataBaseProductos:
 
     @staticmethod
     # Funcion para agregar un nuevo Cliente  "CREATE"
-    def agregar_producto(nombre,precio,descripcion,stock,categoria):
-        conn = DataBaseProductos.conexion()
-        cursor = conn.cursor()
-        sql = "INSERT INTO producto (nombre_producto,precio,descripcion,stock,categoria) VALUES (%s,%s,%s,%s)"
-        valores = (nombre,precio,descripcion,stock,categoria)
-        cursor.execute(sql,valores)
-        conn.commit()
-        cursor.close()
-        conn.close()
-        
+    def agregar_producto(nombre, precio, descripcion, stock, categoria):
+        try:
+            conn = DataBaseProductos.conexion()
+            cursor = conn.cursor()
+            sql = "INSERT INTO producto (nombre_producto, precio, descripcion, stock, categoria) VALUES (%s,%s,%s,%s,%s)"
+            valores = (nombre, precio, descripcion, stock, categoria)
+            cursor.execute(sql,valores)
+            conn.commit()
+            return True
+        except Error as err:
+            print(f'Hubo un error al agregar el cliente: {err}')
+            return False
+        finally:
+            cursor.close()
+            conn.close()
+    
+    @staticmethod
     # Funcion para mostrar clientes por id "READ"
-    def mostrar_producto_por_id(self, id):
-        conn = self.conexion()
+    def mostrar_producto_por_id(id):
+        conn = DataBaseProductos.conexion()
         cursor = conn.cursor()
         sql = "SELECT * FROM producto WHERE id={id}"
         cursor.execute(sql)
