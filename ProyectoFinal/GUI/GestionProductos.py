@@ -293,7 +293,7 @@ class GestionProductos(ctk.CTkToplevel):
 
     def obtenerDatos(self, *args):
         """ Se encarga de la logica para mostrar los datos. """
-        eliminar_icon = ctk.CTkImage(light_image=Image.open('bin.png'), size=(40,40))
+        eliminar_icon = ctk.CTkImage(light_image=Image.open('static/bin.png'), size=(40,40))
 
         #Elimina los widgets (ignorando los encabezados) en caso de haber para evitar duplicado de datos
         for widget in self.frame_datos.winfo_children():

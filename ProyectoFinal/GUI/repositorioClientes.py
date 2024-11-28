@@ -76,6 +76,133 @@ class DataBaseClientes:
         finally:
             cursor.close()
             conn.close()
+
+    @staticmethod
+    def ordenar_por_nombre():
+        try:
+            conn = DataBaseClientes.conexion()
+            cursor = conn.cursor()
+            sql = """SELECT * FROM cliente 
+                    ORDER BY nombre_cliente ASC"""
+            cursor.execute(sql)
+            resultados = cursor.fetchall()
+            return resultados
+        except Error as err:
+            print(f'Ocurrio un error con la consulta: {err}')
+            return []
+        finally:
+            cursor.close()
+            conn.close()
+        
+    @staticmethod
+    def ordenar_por_apellido():
+        try:
+            conn = DataBaseClientes.conexion()
+            cursor = conn.cursor()
+            sql = """SELECT * FROM cliente 
+                    ORDER BY apellido_cliente ASC"""
+            cursor.execute(sql)
+            resultados = cursor.fetchall()
+            return resultados
+        except Error as err:
+            print(f'Ocurrio un error con la consulta: {err}')
+            return []
+        finally:
+            cursor.close()
+            conn.close()
+
+    @staticmethod
+    def ordenar_por_telefono():
+        try:
+            conn = DataBaseClientes.conexion()
+            cursor = conn.cursor()
+            sql = """SELECT * FROM cliente 
+                    ORDER BY telefono ASC"""
+            cursor.execute(sql)
+            resultados = cursor.fetchall()
+            return resultados
+        except Error as err:
+            print(f'Ocurrio un error con la consulta: {err}')
+            return []
+        finally:
+            cursor.close()
+            conn.close()
+
+    @staticmethod
+    def ordenar_por_direccion():
+        try:
+            conn = DataBaseClientes.conexion()
+            cursor = conn.cursor()
+            sql = """SELECT * FROM cliente 
+                    ORDER BY direccion ASC"""
+            cursor.execute(sql)
+            resultados = cursor.fetchall()
+            return resultados
+        except Error as err:
+            print(f'Ocurrio un error con la consulta: {err}')
+            return []
+        finally:
+            cursor.close()
+            conn.close()
+    
+    @staticmethod
+    def ordenar_por_email():
+        try:
+            conn = DataBaseClientes.conexion()
+            cursor = conn.cursor()
+            sql = """SELECT * FROM cliente 
+                    ORDER BY email ASC"""
+            cursor.execute(sql)
+            resultados = cursor.fetchall()
+            return resultados
+        except Error as err:
+            print(f'Ocurrio un error con la consulta: {err}')
+            return []
+        finally:
+            cursor.close()
+            conn.close()
+
+    @staticmethod
+    def cantidad_compras():
+        try:
+            conn = DataBaseClientes.conexion()
+            cursor = conn.cursor()
+            sql = """SELECT cliente.id_cliente, nombre_cliente, apellido_cliente, COUNT(orden.id_cliente) AS cant_compras
+                     FROM cliente
+                     JOIN orden ON cliente.id_cliente = orden.id_cliente 
+                     GROUP BY id_cliente
+                     ORDER BY cant_compras DESC"""
+            cursor.execute(sql)
+            resultados = cursor.fetchall()
+            return resultados
+        except Error as err:
+            print(f'Ocurrio un error con la consulta: {err}')
+            return []
+        finally:
+            cursor.close()
+            conn.close()
+
+    @staticmethod
+    def dinero_gastado():
+        try:
+            conn = DataBaseClientes.conexion()
+            cursor = conn.cursor()
+            sql = """SELECT cliente.id_cliente, nombre_cliente, apellido_cliente, SUM(subtotal) AS dinero_gastado
+                     FROM cliente
+                     JOIN orden ON cliente.id_cliente = orden.id_cliente
+                     JOIN orden_producto ON orden.id_orden = orden_producto.id_orden
+                     GROUP BY id_cliente
+                     ORDER BY dinero_gastado DESC"""
+            cursor.execute(sql)
+            resultados = cursor.fetchall()
+            return resultados
+        except Error as err:
+            print(f'Ocurrio un error con la consulta: {err}')
+            return []
+        finally:
+            cursor.close()
+            conn.close()
+
     
     
     # Funcion para eliminar un cliente "DElETE"
