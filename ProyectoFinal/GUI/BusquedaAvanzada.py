@@ -272,12 +272,3 @@ class BusquedaAvanzada(ctk.CTkToplevel):
 
         #Layout
         tabla.pack(expand=True, fill='both')
-
-
-    def eliminarOrden(self, *args):
-        id = args[0].get()
-        if DatabaseOrdenes.eliminar_orden(id):
-            self.tabla()
-            CTkMessagebox.CTkMessagebox(message='Orden eliminada correctamente', title='Error')
-        else:
-            CTkMessagebox.CTkMessagebox(message='Error al eliminar la orden.', title='Error')
