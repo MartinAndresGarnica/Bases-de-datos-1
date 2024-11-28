@@ -1,5 +1,4 @@
 import customtkinter as ctk
-import tkinter as tk
 from PIL import Image
 import CTkMessagebox
 from repositorioClientes import DataBaseClientes
@@ -312,7 +311,7 @@ class GestionClientes(ctk.CTkToplevel):
 
     def obtenerDatos(self, *args):
         """ Se encarga de la logica para mostrar los datos. """
-        eliminar_icon = ctk.CTkImage(light_image=Image.open('bin.png'), size=(40,40))
+        icono_eliminar = ctk.CTkImage(light_image=Image.open('static/bin.png'), size=(40,40))
 
         #Elimina los widgets (ignorando los encabezados) en caso de haber para evitar duplicado de datos
         for widget in self.frame_datos.winfo_children():
@@ -328,7 +327,7 @@ class GestionClientes(ctk.CTkToplevel):
                     label = ctk.CTkLabel(self.frame_datos, text=dato, font=('Arial', 20), bg_color='#3d3d3d')
                 label.grid(row=indice_producto+1, column=indice_dato, sticky='we', ipady=15) #Acomoda cada producto en una fila nueva, use como guia el indice del producto dentro de lista_Clientes
                 
-            boton_eliminar = ctk.CTkButton(self.frame_datos, image=eliminar_icon, text='', command=lambda id=producto[0]: self.eliminarCliente(id), fg_color='#F34235', width=50, height=28, hover_color='#F34235')
+            boton_eliminar = ctk.CTkButton(self.frame_datos, image=icono_eliminar, text='', command=lambda id=producto[0]: self.eliminarCliente(id), fg_color='#F34235', width=50, height=28, hover_color='#F34235')
             boton_eliminar.grid(row=indice_producto+1, column=len(producto), padx=0, pady=0)
 
         

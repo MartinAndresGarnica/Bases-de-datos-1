@@ -2,6 +2,8 @@ import customtkinter as ctk
 import tkinter as tk
 from GestionProductos import GestionProductos
 from GestionClientes import GestionClientes
+from ProcesarOrdenes import ProcesamientoOrdenes
+from BusquedaAvanzada import BusquedaAvanzada
 
 class Menu(ctk.CTk):
     def __init__(self, *args, **kwargs):
@@ -22,7 +24,6 @@ class Menu(ctk.CTk):
             height= 80,
             command=lambda: GestionProductos(self)
         )
-        boton_Gproductos.pack( padx=80, expand=True, fill='x')
 
         boton_Gclientes = ctk.CTkButton(
             self.frame,
@@ -31,23 +32,22 @@ class Menu(ctk.CTk):
             height= 80,
             command=lambda: GestionClientes(self)
         )
-        boton_Gclientes.pack( padx=80, expand=True, fill='x')
 
         boton_Gordenes = ctk.CTkButton(
             self.frame,
-            text='Gestionar ordenes',
+            text='Procesar ordenes',
             font=('Arial', 18),
-            height= 80
+            height= 80,
+            command=lambda: ProcesamientoOrdenes(self)
         )
-        boton_Gordenes.pack( padx=80, expand=True, fill='x')
 
         boton_B_avanzada = ctk.CTkButton(
             self.frame,
             text='Busqueda avanzada',
             font=('Arial', 18),
-            height=80
+            height=80,
+            command=lambda: BusquedaAvanzada(self)
         )
-        boton_B_avanzada.pack( padx= 80, expand=True, fill='x')
 
         boton_reportes = ctk.CTkButton(
             self.frame,
@@ -55,7 +55,6 @@ class Menu(ctk.CTk):
             font=('Arial', 18),
             height=80
         )
-        boton_reportes.pack(padx= 80, expand=True, fill='x')
 
         boton_M_valor = ctk.CTkButton(
             self.frame,
@@ -63,7 +62,15 @@ class Menu(ctk.CTk):
             font=('Arial', 18),
             height=80
         )
+
+        #layout
+        boton_Gproductos.pack( padx=80, expand=True, fill='x')
+        boton_Gclientes.pack( padx=80, expand=True, fill='x')
+        boton_Gordenes.pack( padx=80, expand=True, fill='x')
+        boton_B_avanzada.pack( padx= 80, expand=True, fill='x')
+        boton_reportes.pack(padx= 80, expand=True, fill='x')
         boton_M_valor.pack(padx= 80, expand=True, fill='x')
+
 
 
 app = Menu()

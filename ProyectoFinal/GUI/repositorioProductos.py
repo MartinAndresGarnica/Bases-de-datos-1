@@ -62,7 +62,7 @@ class DataBaseProductos:
 
     @staticmethod
     # Funcion para actualizar datos de un cliente "UPDATE"
-    def actualizar_producto(id ,nombre_producto,precio,descripcion,stock,categoria):
+    def actualizar_producto(id ,nombre_producto,precio,descripcion,stock,categoria) -> bool:
         try:
             conn = DataBaseProductos.conexion()
             cursor = conn.cursor()
@@ -75,6 +75,131 @@ class DataBaseProductos:
             print(f'Ocurrio un error: {err}')
             return False
         finally: 
+            cursor.close()
+            conn.close()
+    
+    @staticmethod
+    def ordenar_por_nombre() -> list:
+        try:
+            conn = DataBaseProductos.conexion()
+            cursor = conn.cursor()
+            sql = """SELECT * FROM producto
+                    ORDER BY nombre_producto ASC"""
+            cursor.execute(sql)
+            resultados = cursor.fetchall()
+            return resultados
+        except Error as err:
+            print(f'Ocurrio un error con la consulta: {err}')
+            return []
+        finally:
+            cursor.close()
+            conn.close()
+        
+    @staticmethod
+    def ordenar_por_precio() -> list:
+        try:
+            conn = DataBaseProductos.conexion()
+            cursor = conn.cursor()
+            sql = """SELECT * FROM producto 
+                    ORDER BY precio ASC"""
+            cursor.execute(sql)
+            resultados = cursor.fetchall()
+            return resultados
+        except Error as err:
+            print(f'Ocurrio un error con la consulta: {err}')
+            return []
+        finally:
+            cursor.close()
+            conn.close()
+
+    @staticmethod
+    def ordenar_por_descripcion() -> list:
+        try:
+            conn = DataBaseProductos.conexion()
+            cursor = conn.cursor()
+            sql = """SELECT * FROM producto 
+                    ORDER BY descripcion ASC"""
+            cursor.execute(sql)
+            resultados = cursor.fetchall()
+            return resultados
+        except Error as err:
+            print(f'Ocurrio un error con la consulta: {err}')
+            return []
+        finally:
+            cursor.close()
+            conn.close()
+
+    @staticmethod
+    def ordenar_por_stock() -> list:
+        try:
+            conn = DataBaseProductos.conexion()
+            cursor = conn.cursor()
+            sql = """SELECT * FROM producto 
+                    ORDER BY stock ASC"""
+            cursor.execute(sql)
+            resultados = cursor.fetchall()
+            return resultados
+        except Error as err:
+            print(f'Ocurrio un error con la consulta: {err}')
+            return []
+        finally:
+            cursor.close()
+            conn.close()
+    
+    @staticmethod
+    def ordenar_por_categoria() -> list:
+        try:
+            conn = DataBaseProductos.conexion()
+            cursor = conn.cursor()
+            sql = """SELECT * FROM producto
+                    ORDER BY categoria ASC"""
+            cursor.execute(sql)
+            resultados = cursor.fetchall()
+            return resultados
+        except Error as err:
+            print(f'Ocurrio un error con la consulta: {err}')
+            return []
+        finally:
+            cursor.close()
+            conn.close()
+
+    @staticmethod
+    def mas_vendido() -> list:
+        try:
+            conn = DataBaseProductos.conexion()
+            cursor = conn.cursor()
+            sql = """SELECT producto.id_producto, nombre_producto, precio, categoria, SUM(cantidad_producto) AS cant_ventas
+                     FROM producto
+                     JOIN orden_producto ON producto.id_producto = orden_producto.id_producto 
+                     GROUP BY producto.id_producto
+                     ORDER BY cant_ventas DESC"""
+            cursor.execute(sql)
+            resultados = cursor.fetchall()
+            return resultados
+        except Error as err:
+            print(f'Ocurrio un error con la consulta: {err}')
+            return []
+        finally:
+            cursor.close()
+            conn.close()
+
+    @staticmethod
+    def mas_ganancias() -> list:
+        try:
+            conn = DataBaseProductos.conexion()
+            cursor = conn.cursor()
+            sql = """SELECT producto.id_producto, nombre_producto, precio, categoria, SUM(cantidad_producto) AS cant_ventas, SUM(subtotal) AS total
+                     FROM producto
+                     JOIN orden_producto ON producto.id_producto = orden_producto.id_producto 
+                     GROUP BY producto.id_producto
+                     ORDER BY total DESC"""
+            cursor.execute(sql)
+            resultados = cursor.fetchall()
+            return resultados
+        except Error as err:
+            print(f'Ocurrio un error con la consulta: {err}')
+            return []
+        finally:
             cursor.close()
             conn.close()
     
