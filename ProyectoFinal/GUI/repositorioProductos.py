@@ -20,14 +20,19 @@ class DataBaseProductos:
 
     @staticmethod
     def cargarProductos() -> list:
-        conn = DataBaseProductos.conexion()
-        cursor = conn.cursor()
-        sql= "SELECT * FROM producto;"
-        cursor.execute(sql)
-        resultados = cursor.fetchall()
-        cursor.close()
-        conn.close()
-        return resultados
+        try:
+            conn = DataBaseProductos.conexion()
+            cursor = conn.cursor()
+            sql= "SELECT * FROM producto;"
+            cursor.execute(sql)
+            resultados = cursor.fetchall()
+            return resultados
+        except Error as err:
+            print(f'Ocurrio un error en la consulta: {err}')
+            return []
+        finally:
+            cursor.close()
+            conn.close()
 
     @staticmethod
     # Funcion para agregar un nuevo Cliente  "CREATE"
@@ -50,14 +55,19 @@ class DataBaseProductos:
     @staticmethod
     # Funcion para mostrar clientes por id "READ"
     def mostrar_producto_por_id(id):
-        conn = DataBaseProductos.conexion()
-        cursor = conn.cursor()
-        sql = "SELECT * FROM producto WHERE id={id}"
-        cursor.execute(sql)
-        resultados = cursor.fetchall()
-        cursor.close()
-        conn.close()
-        return resultados
+        try:
+            conn = DataBaseProductos.conexion()
+            cursor = conn.cursor()
+            sql = "SELECT * FROM producto WHERE id={id}"
+            cursor.execute(sql)
+            resultados = cursor.fetchall()
+            return resultados
+        except Error as err:
+            print(f'Ocurrio un error en la consulta: {err}')
+            return []
+        finally:
+            cursor.close()
+            conn.close()
             
 
     @staticmethod
@@ -216,6 +226,22 @@ class DataBaseProductos:
         except Error as err:
             print(f'Hubo un error al eliminar el producto: {err}')
             return False
+        finally:
+            cursor.close()
+            conn.close()
+
+    @staticmethod
+    def producto_mas_vendido():
+        conn = DataBaseProductos.conexion()
+        cursor = conn.cursor(pymysql.cursors.DictCursor)
+        try:
+            sql = "SELECT p.nombre_producto, SUM(d.cantidad_producto) as total_vendido FROM producto p JOIN orden_producto d ON p.id_producto = d.id_producto GROUP BY p.id_producto ORDER BY total_vendido DESC LIMIT 1"
+            cursor.execute(sql)
+            producto = cursor.fetchone()
+            return producto
+        except pymysql.MySQLError as e:
+            print(f"Error al buscar el producto más vendido: {e}")
+            return None
         finally:
             cursor.close()
             conn.close()

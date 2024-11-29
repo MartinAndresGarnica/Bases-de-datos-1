@@ -1,9 +1,9 @@
 import customtkinter as ctk
-import tkinter as tk
 from GestionProductos import GestionProductos
 from GestionClientes import GestionClientes
 from ProcesarOrdenes import ProcesamientoOrdenes
 from BusquedaAvanzada import BusquedaAvanzada
+from ReporteProductos import ReporteProductoMasVendido
 
 class Menu(ctk.CTk):
     def __init__(self, *args, **kwargs):
@@ -51,9 +51,10 @@ class Menu(ctk.CTk):
 
         boton_reportes = ctk.CTkButton(
             self.frame,
-            text='Reportes',
+            text='Producto mas vendido',
             font=('Arial', 18),
-            height=80
+            height=80,
+            command=lambda: ReporteProductoMasVendido(self)
         )
 
         boton_M_valor = ctk.CTkButton(
@@ -72,6 +73,6 @@ class Menu(ctk.CTk):
         boton_M_valor.pack(padx= 80, expand=True, fill='x')
 
 
-
-app = Menu()
-app.mainloop()
+if __name__ == "__main__":
+    app = Menu()
+    app.mainloop()
