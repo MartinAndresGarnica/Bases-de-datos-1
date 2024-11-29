@@ -167,7 +167,7 @@ class DetalleOrden(ctk.CTkToplevel):
     def __init__(self, *args, **kwargs):
         super().__init__()
         self.geometry('500x500')  # Tamaño de la ventana emergente
-        self.title('Reporte Producto Más Vendido')
+        self.title('Detalle de la orden')
         self.resizable(0, 0)
         self.grab_set()
         self.id = args[1]
@@ -180,16 +180,16 @@ class DetalleOrden(ctk.CTkToplevel):
         self.frameDetallesIzquierda.pack(side='left', expand=True, fill='both')
         self.frameDetallesDerecha.pack(side='left', expand=True, fill='both')
 
-        # Cargar los datos del producto más vendido
+        # Cargar los datos de la orden
         producto = DatabaseOrdenes.detalles_orden(self.id)
 
+        # Etiquetas para mostrar los resultados
         label_encabezadoProducto = ctk.CTkLabel(self.frameEncabezados, text='Productos', font=('Arial', 22))
         label_encabezadoCantidad = ctk.CTkLabel(self.frameEncabezados, text='Cantidad', font=('Arial', 22))
         label_encabezadoProducto.pack(side='left', fill='x', expand=True)
         label_encabezadoCantidad.pack(side='left', fill='x', expand=True)
 
 
-        # Etiquetas para mostrar los resultados
         for i, datos in enumerate(producto):
             for indice, dato in enumerate(datos):
                 if indice == 0:
