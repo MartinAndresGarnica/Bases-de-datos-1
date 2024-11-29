@@ -43,10 +43,11 @@ class DatabaseOrdenes:
         try:
             conn = DatabaseOrdenes.conexion()
             cursor = conn.cursor()
-            sql = """SELECT orden.id_orden, id_cliente, id_producto, cantidad_producto, fecha, subtotal
+            sql = """SELECT orden.id_orden, id_cliente, fecha, SUM(subtotal)
                     FROM orden
                     JOIN orden_producto ON orden_producto.id_orden = orden.id_orden
-                    WHERE orden.id_orden = %s;"""
+                    WHERE orden.id_orden = %s
+                    GROUP BY orden.id_orden;"""
             cursor.execute(sql, id)
             resultados = cursor.fetchall()
             return resultados
@@ -62,16 +63,17 @@ class DatabaseOrdenes:
         try:
             conn = DatabaseOrdenes.conexion()
             cursor = conn.cursor()
-            sql = """SELECT orden.id_orden, id_cliente, id_producto, cantidad_producto, fecha, subtotal
+            sql = """SELECT orden.id_orden, id_cliente, fecha, SUM(subtotal)
                     FROM orden
                     JOIN orden_producto ON orden_producto.id_orden = orden.id_orden
-                    WHERE id_cliente = %s;"""
+                    WHERE id_cliente = %s
+                    GROUP BY orden.id_orden;"""
             cursor.execute(sql, id)
             resultados = cursor.fetchall()
             return resultados
         except Error as err:
             print(f'Ocurrio un error con la consutla: {err}')
-            return None
+            return []
         finally:
             cursor.close()
             conn.close()
