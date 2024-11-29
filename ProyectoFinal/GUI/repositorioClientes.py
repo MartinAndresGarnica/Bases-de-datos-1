@@ -19,14 +19,19 @@ class DataBaseClientes:
 
     @staticmethod
     def cargarClientes() -> list:
-        conn = DataBaseClientes.conexion()
-        cursor = conn.cursor()
-        sql= "SELECT * FROM cliente;"
-        cursor.execute(sql)
-        resultados = cursor.fetchall()
-        cursor.close()
-        conn.close()
-        return resultados
+        try:
+            conn = DataBaseClientes.conexion()
+            cursor = conn.cursor()
+            sql= "SELECT * FROM cliente;"
+            cursor.execute(sql)
+            resultados = cursor.fetchall()
+            return resultados
+        except Error as err:
+            print(f'Error en la consulta: {err}')
+            return []
+        finally:
+            cursor.close()
+            conn.close()
 
     @staticmethod
     # Funcion para agregar un nuevo Cliente  "CREATE"
@@ -49,14 +54,19 @@ class DataBaseClientes:
     @staticmethod    
     # Funcion para mostrar clientes por id "READ"
     def mostrar_cliente_por_id(id):
-        conn = DataBaseClientes.conexion()
-        cursor = conn.cursor()
-        sql = f"SELECT * FROM cliente WHERE id={id}"
-        cursor.execute(sql)
-        resultados = cursor.fetchall()
-        cursor.close()
-        conn.close()
-        return resultados
+        try:
+            conn = DataBaseClientes.conexion()
+            cursor = conn.cursor()
+            sql = f"SELECT * FROM cliente WHERE id={id}"
+            cursor.execute(sql)
+            resultados = cursor.fetchall()
+            return resultados
+        except Error as err:
+            print(f'Error en la consulta {err}')
+            return []
+        finally:
+            cursor.close()
+            conn.close()
             
 
     @staticmethod

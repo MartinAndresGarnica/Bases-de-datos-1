@@ -22,9 +22,10 @@ class DatabaseOrdenes:
         try:
             conn = DatabaseOrdenes.conexion()
             cursor = conn.cursor()
-            sql= """SELECT orden.id_orden, id_cliente, id_producto, cantidad_producto, fecha, subtotal
+            sql= """SELECT orden.id_orden, id_cliente, fecha, SUM(subtotal)
                     FROM orden
-                    JOIN orden_producto ON orden_producto.id_orden = orden.id_orden;"""
+                    JOIN orden_producto ON orden_producto.id_orden = orden.id_orden
+                    GROUP BY orden.id_orden;"""
             cursor.execute(sql)
             resultados = cursor.fetchall()
             return resultados
@@ -42,10 +43,11 @@ class DatabaseOrdenes:
         try:
             conn = DatabaseOrdenes.conexion()
             cursor = conn.cursor()
-            sql = """SELECT orden.id_orden, id_cliente, id_producto, cantidad_producto, fecha, subtotal
+            sql = """SELECT orden.id_orden, id_cliente, fecha, SUM(subtotal)
                     FROM orden
                     JOIN orden_producto ON orden_producto.id_orden = orden.id_orden
-                    WHERE orden.id_orden = %s;"""
+                    WHERE orden.id_orden = %s
+                    GROUP BY orden.id_orden;"""
             cursor.execute(sql, id)
             resultados = cursor.fetchall()
             return resultados
@@ -61,16 +63,17 @@ class DatabaseOrdenes:
         try:
             conn = DatabaseOrdenes.conexion()
             cursor = conn.cursor()
-            sql = """SELECT orden.id_orden, id_cliente, id_producto, cantidad_producto, fecha, subtotal
+            sql = """SELECT orden.id_orden, id_cliente, fecha, SUM(subtotal)
                     FROM orden
                     JOIN orden_producto ON orden_producto.id_orden = orden.id_orden
-                    WHERE id_cliente = %s;"""
+                    WHERE id_cliente = %s
+                    GROUP BY orden.id_orden;"""
             cursor.execute(sql, id)
             resultados = cursor.fetchall()
             return resultados
         except Error as err:
             print(f'Ocurrio un error con la consutla: {err}')
-            return None
+            return []
         finally:
             cursor.close()
             conn.close()
@@ -89,6 +92,25 @@ class DatabaseOrdenes:
         except Error as err:
             print(f'Hubo un error al eliminar el cliente: {err}')
             return False
+        finally:
+            cursor.close()
+            conn.close()
+
+    @staticmethod
+    def detalles_orden(id):
+        try:
+            conn = DatabaseOrdenes.conexion()
+            cursor = conn.cursor()
+            sql = """SELECT nombre_producto, cantidad_producto
+                    FROM orden_producto
+                    JOIN producto ON orden_producto.id_producto = producto.id_producto
+                    WHERE id_orden = %s;"""
+            cursor.execute(sql, id)
+            resultados = cursor.fetchall()
+            return resultados
+        except Error as err:
+            print(f'Ocurrio un error con la consutla: {err}')
+            return None
         finally:
             cursor.close()
             conn.close()

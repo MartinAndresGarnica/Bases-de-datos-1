@@ -24,6 +24,8 @@ class ProcesamientoOrdenes(ctk.CTkToplevel):
         self.agregarOrdenes.pack(side='left', fill='both')
         self.tablaOrdenes.pack(side='left', expand=True, fill='both')
 
+        self.treeview = None
+
 
         #Encabezados
         self.encabezados = []
@@ -90,6 +92,16 @@ class ProcesamientoOrdenes(ctk.CTkToplevel):
         for columna in tabla["columns"]:
             tabla.column(columna, width=ancho_columna, anchor='c')
 
+    def clickear_filas(self, evento):
+        fila = self.treeview.identify('item', evento.x, evento.y)
+        
+        #Esto es para sacar la id de la orden
+        valores = self.treeview.item(fila, 'values')
+        id = valores[0]
+
+        DetalleOrden(self, id)
+        
+
 
     def tabla(self, *args):
         if 'Filtrar' in args:
@@ -115,24 +127,24 @@ class ProcesamientoOrdenes(ctk.CTkToplevel):
         estiloTabla.configure("Treeview", background="#2b2a2a", foreground="white", fieldbackground="#2a2d2e", rowheight=40, font=('Arial', 12))
 
         #Crea la tabla
-        tabla = ttk.Treeview(self.tablaOrdenes, columns=("ID_orden", "ID_cliente", "ID_producto", "Cantidad_producto", "Fecha", "Total"), show="headings")
+        tabla = ttk.Treeview(self.tablaOrdenes, columns=("ID_orden", "ID_cliente", "Fecha", "Total"), show="headings")
+        self.treeview = tabla
         tabla.heading("ID_orden", text='ID orden')
         tabla.heading("ID_cliente", text='ID cliente')
-        tabla.heading("ID_producto", text='ID producto')
-        tabla.heading("Cantidad_producto", text='Cantidad')
         tabla.heading("Fecha", text='Fecha')
         tabla.heading("Total", text='Total')
 
         #Configura las columnas para ajustarse dinamicamente
         tabla.bind("<Configure>", self.ajustar_columnas)
+        tabla.bind("<Button-1>", self.clickear_filas)
         
 
         #Inserta los datos en la tabla y les pone un tag para poder agregarle el color segun sea par o impar
         for indice, orden in enumerate(self.lista_Ordenes):
             if indice % 2 == 0:
-                tabla.insert("", "end", values=orden, tags='Par')
+                tabla.insert("", "end", values=orden, tags='Par', iid=f'row{indice}')
             else:
-                tabla.insert("", "end", values=orden, tags='Impar')
+                tabla.insert("", "end", values=orden, tags='Impar', iid=f'row{indice}')
 
         #Asignamos colores segun su tag
         tabla.tag_configure('Par', background='#5d5d5d')
@@ -149,3 +161,41 @@ class ProcesamientoOrdenes(ctk.CTkToplevel):
             CTkMessagebox.CTkMessagebox(message='Orden eliminada correctamente', title='Error')
         else:
             CTkMessagebox.CTkMessagebox(message='Error al eliminar la orden.', title='Error')
+
+
+class DetalleOrden(ctk.CTkToplevel):
+    def __init__(self, *args, **kwargs):
+        super().__init__()
+        self.geometry('500x500')  # Tamaño de la ventana emergente
+        self.title('Detalle de la orden')
+        self.resizable(0, 0)
+        self.grab_set()
+        self.id = args[1]
+        self.frameEncabezados = ctk.CTkFrame(self)
+        self.frameDetalles = ctk.CTkFrame(self)
+        self.frameDetallesIzquierda = ctk.CTkFrame(self.frameDetalles)
+        self.frameDetallesDerecha = ctk.CTkFrame(self.frameDetalles)
+        self.frameEncabezados.pack(fill='x')
+        self.frameDetalles.pack(expand=True, fill='both')
+        self.frameDetallesIzquierda.pack(side='left', expand=True, fill='both')
+        self.frameDetallesDerecha.pack(side='left', expand=True, fill='both')
+
+        # Cargar los datos de la orden
+        producto = DatabaseOrdenes.detalles_orden(self.id)
+
+        # Etiquetas para mostrar los resultados
+        label_encabezadoProducto = ctk.CTkLabel(self.frameEncabezados, text='Productos', font=('Arial', 22))
+        label_encabezadoCantidad = ctk.CTkLabel(self.frameEncabezados, text='Cantidad', font=('Arial', 22))
+        label_encabezadoProducto.pack(side='left', fill='x', expand=True)
+        label_encabezadoCantidad.pack(side='left', fill='x', expand=True)
+
+
+        for i, datos in enumerate(producto):
+            for indice, dato in enumerate(datos):
+                if indice == 0:
+                    label_titulo = ctk.CTkLabel(self.frameDetallesIzquierda, text=dato, font=('Arial', 18))
+                else:
+                    label_titulo = ctk.CTkLabel(self.frameDetallesDerecha, text=dato, font=('Arial', 18))
+                label_titulo.grid(row=i, column = indice, sticky='', padx=30, pady=15)
+
+
