@@ -1,9 +1,9 @@
-import mysql.connector
 import pymysql
 from pymysql.err import Error
 
 class DatabaseOrdenes:
 
+    #Funcion para conectar a la base de datos
     @staticmethod
     def conexion():
         try:
@@ -17,8 +17,9 @@ class DatabaseOrdenes:
         except pymysql.MySQLError as e:
             raise ConnectionError(f"No se pudo conectar a la base de datos: {e}")
 
+    #Funcion para cargar todas las ordenes
     @staticmethod
-    def cargarOrdenes() -> list:
+    def cargarOrdenes() -> tuple:
         try:
             conn = DatabaseOrdenes.conexion()
             cursor = conn.cursor()
@@ -39,7 +40,7 @@ class DatabaseOrdenes:
         
     @staticmethod    
     # Funcion para mostrar Ordenes por id "READ"
-    def mostrar_orden_ID(id):
+    def mostrar_orden_ID(id) -> tuple:
         try:
             conn = DatabaseOrdenes.conexion()
             cursor = conn.cursor()
@@ -58,8 +59,10 @@ class DatabaseOrdenes:
             cursor.close()
             conn.close()
 
+
+    #Funcion para mostrar las ordenes de un cliente dado
     @staticmethod
-    def mostrar_orden_cliente(id):
+    def mostrar_orden_cliente(id) -> tuple:
         try:
             conn = DatabaseOrdenes.conexion()
             cursor = conn.cursor()
@@ -79,9 +82,9 @@ class DatabaseOrdenes:
             conn.close()
     
     
-    # Funcion para eliminar un cliente "DElETE"
+    # Funcion para eliminar un orden "DElETE"
     @staticmethod
-    def eliminar_orden(id):
+    def eliminar_orden(id) -> bool:
         conn = DatabaseOrdenes.conexion()
         try:
             cursor = conn.cursor()
@@ -96,8 +99,9 @@ class DatabaseOrdenes:
             cursor.close()
             conn.close()
 
+    #Funcion para obtener el detalle de las ordenes (nombre y cantidad de productos)
     @staticmethod
-    def detalles_orden(id):
+    def detalles_orden(id) -> tuple:
         try:
             conn = DatabaseOrdenes.conexion()
             cursor = conn.cursor()

@@ -1,6 +1,5 @@
 import customtkinter as ctk
 from tkinter import ttk
-from PIL import Image
 import CTkMessagebox
 from repositorioOrdenes import DatabaseOrdenes
 

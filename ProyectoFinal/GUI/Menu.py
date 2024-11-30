@@ -9,6 +9,7 @@ class Menu(ctk.CTk):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, *kwargs)
         self.geometry('800x800')
+        ctk.set_appearance_mode("dark")
         self.title('Menu')
         self.frame = ctk.CTkFrame(self)
         self.frame.pack(fill='both', expand='y')

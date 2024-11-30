@@ -1,7 +1,5 @@
 import customtkinter as ctk
 from tkinter import ttk
-from PIL import Image
-import CTkMessagebox
 from repositorioClientes import DataBaseClientes
 from repositorioProductos import DataBaseProductos
 
@@ -61,21 +59,25 @@ class BusquedaAvanzada(ctk.CTkToplevel):
             boton_tablaPrincipal = ctk.CTkButton(frame_botones, text='Quitar filtro', font=('Arial', 18), width=180, height=40, command=lambda: self.tabla('Clientes'))
             boton_masCompras = ctk.CTkButton(frame_botones, text='Cantidad de compras', font=('Arial', 18), width=180, height=40, command=lambda: self.tabla('Clientes', 'CantCompras'))
             boton_dineroGastado = ctk.CTkButton(frame_botones, text='Dinero gastado', font=('Arial', 18), width=180, height=40, command=lambda: self.tabla('Clientes', 'DineroGastado'))
+            boton_menor_diez = ctk.CTkButton(frame_botones, text='Menos de 10 compras', font=('Arial', 18), width=180, height=40, command=lambda: self.tabla('Clientes', 'CantCompras', 'menor_10'))
 
 
             boton_tablaPrincipal.pack(padx = 15, pady = 30)
             boton_masCompras.pack(padx = 15, pady= 10)
             boton_dineroGastado.pack(padx = 15 , pady = 10)
+            boton_menor_diez.pack(padx= 15, pady = 10)
         else:
 
             boton_tablaPrincipal = ctk.CTkButton(frame_botones, text='Quitar filtro', font=('Arial', 18), width=180, height=40, command= self.tabla)
             boton_masVendido = ctk.CTkButton(frame_botones, text='Productos mas vendidos', font=('Arial', 18), width=180, height=40, command=lambda: self.tabla('MasVendido'))
-            boton_masCaros = ctk.CTkButton(frame_botones, text='Mayor recaudacion', font=('Arial', 18), width=180, height=40, command=lambda: self.tabla('MasGanancia'))
-
+            boton_masGanancia = ctk.CTkButton(frame_botones, text='Mayor recaudacion', font=('Arial', 18), width=180, height=40, command=lambda: self.tabla('MasGanancia'))
+            boton_cinco_mas_caros = ctk.CTkButton(frame_botones, text='5 mas caros', font=('Arial', 18), width=180, height=40, command=lambda: self.tabla('cinco_mas_caros'))
+            
 
             boton_tablaPrincipal.pack(padx = 15, pady = 30)
             boton_masVendido.pack(padx = 15, pady= 10)
-            boton_masCaros.pack(padx = 15 , pady = 10)
+            boton_masGanancia.pack(padx = 15 , pady = 10)
+            boton_cinco_mas_caros.pack(padx = 15, pady= 10)
 
 
     def ajustar_columnas(self, event):
@@ -123,7 +125,10 @@ class BusquedaAvanzada(ctk.CTkToplevel):
                 self.lista = DataBaseClientes.cargarClientes()
 
             if 'CantCompras' in args:
-                self.lista = DataBaseClientes.cantidad_compras()
+                if 'menor_10' in args:
+                    self.lista = DataBaseClientes.clientes_menos_diez()
+                else:
+                    self.lista = DataBaseClientes.cantidad_compras()
                 #Crea la tabla
                 tabla = ttk.Treeview(self.tablas, columns=("ID_cliente", "Nombre", "Apellido", "Compras"), show="headings")
 
@@ -146,6 +151,8 @@ class BusquedaAvanzada(ctk.CTkToplevel):
             elif 'DineroGastado' in args:
 
                 self.lista = DataBaseClientes.dinero_gastado()
+                list(self.lista)
+                print(self.lista)
                 #Crea la tabla
                 tabla = ttk.Treeview(self.tablas, columns=("ID_cliente", "Nombre", "Apellido", "Dinero"), show="headings")
 
@@ -203,7 +210,7 @@ class BusquedaAvanzada(ctk.CTkToplevel):
             
             
             if 'MasVendido' in args:
-                self.lista = DataBaseProductos.mas_vendido()
+                self.lista = DataBaseProductos.cant_ventas()
                 tabla = ttk.Treeview(self.tablas, columns=("ID_producto", "Nombre", "Precio", "Categoria", "Cantidad_vendida"), show="headings")
                 tabla.heading("ID_producto", text='ID')
                 tabla.heading("Nombre", text='Nombre')
@@ -246,6 +253,9 @@ class BusquedaAvanzada(ctk.CTkToplevel):
                         tabla.insert("", "end", values=orden, tags='Impar')
 
             else:
+                if 'cinco_mas_caros' in args:
+                    self.lista = DataBaseProductos.cinco_mas_caros()
+
                 tabla = ttk.Treeview(self.tablas, columns=("ID_producto", "Nombre", "Precio", "Descripcion","Stock", "Categoria"), show="headings")
                 tabla.heading("ID_producto", text='ID', command= self.tabla)
                 tabla.heading("Nombre", text='Nombre', command=lambda: self.tabla('Nombre'))
