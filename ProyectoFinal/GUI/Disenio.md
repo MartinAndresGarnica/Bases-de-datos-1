@@ -1,4 +1,6 @@
-# Explicacion de diseño
+# Explicación de diseño
+
+![Menú principal](./static/Diagrama.jpg)
 
 ## Primera forma normal (1NF):
 
@@ -37,6 +39,31 @@
 
 &nbsp;
 
+# Organización del proyecto
+## Modulos utilizados
+- Pymysql
+- Tkinter
+- CustomTkinter
+
+## Distribución de archivos:
+
+### Carpeta repositorios:
+- Contiene los archivos que se encargan de las consultas específicas de cada sección.
+
+### Carpeta secciones:
+- Contiene las distintas partes del proyecto separadas en sus respectivos archivos. Además, utilizamos clases como forma de organizar el código para tener un orden y un mejor manejo de las funciones.
+
+### Carpeta static:
+- Guarda las imágenes necesarias para el proyecto.
+
+### Carpeta SQL:
+- Contiene los códigos para crear la base de datos, poblarla y generar órdenes aleatorias (dependiendo del stock) entre productos y clientes.
+
+### Menu.py:
+- Es el archivo principal que se encarga de conectar todas las secciones del proyecto.
+
+
+&nbsp;
 
 # Pequeña guía de la app
 

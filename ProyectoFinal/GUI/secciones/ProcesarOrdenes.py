@@ -1,7 +1,7 @@
 import customtkinter as ctk
 from tkinter import ttk
 import CTkMessagebox
-from repositorioOrdenes import DatabaseOrdenes
+from repositorios.repositorioOrdenes import DatabaseOrdenes
 
 class ProcesamientoOrdenes(ctk.CTkToplevel):
     def __init__(self, *args, **kwargs):

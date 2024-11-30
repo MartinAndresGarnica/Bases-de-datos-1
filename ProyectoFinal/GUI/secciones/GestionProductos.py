@@ -1,7 +1,7 @@
 import customtkinter as ctk
 from PIL import Image
 import CTkMessagebox
-from repositorioProductos import DataBaseProductos
+from repositorios.repositorioProductos import DataBaseProductos
 
 class GestionProductos(ctk.CTkToplevel):
     def __init__(self, *args, **kwargs):

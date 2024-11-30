@@ -1,7 +1,7 @@
 import customtkinter as ctk
 from PIL import Image
 import CTkMessagebox
-from repositorioClientes import DataBaseClientes
+from repositorios.repositorioClientes import DataBaseClientes
 
 class GestionClientes(ctk.CTkToplevel):
     def __init__(self, *args, **kwargs):

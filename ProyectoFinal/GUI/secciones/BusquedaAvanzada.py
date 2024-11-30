@@ -1,7 +1,7 @@
 import customtkinter as ctk
 from tkinter import ttk
-from repositorioClientes import DataBaseClientes
-from repositorioProductos import DataBaseProductos
+from repositorios.repositorioClientes import DataBaseClientes
+from repositorios.repositorioProductos import DataBaseProductos
 
 class BusquedaAvanzada(ctk.CTkToplevel):
     def __init__(self, *args, **kwargs):

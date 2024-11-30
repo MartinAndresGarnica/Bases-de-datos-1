@@ -1,5 +1,5 @@
 import customtkinter as ctk
-from repositorioProductos import DataBaseProductos
+from repositorios.repositorioProductos import DataBaseProductos
 
 class ReporteProductoMasVendido(ctk.CTkToplevel):
     def __init__(self, *args, **kwargs):
