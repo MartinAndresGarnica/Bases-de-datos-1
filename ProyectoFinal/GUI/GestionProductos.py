@@ -321,8 +321,3 @@ class GestionProductos(ctk.CTkToplevel):
             self.obtenerDatos()
         else:
             CTkMessagebox.CTkMessagebox(message='Error al eliminar el producto.', title='Error')
-
-    
-
-        
-

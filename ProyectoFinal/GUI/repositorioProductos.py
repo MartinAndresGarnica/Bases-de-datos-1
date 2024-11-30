@@ -4,6 +4,7 @@ from pymysql.err import Error
 
 class DataBaseProductos:
 
+    #Funcion para establecer la conexion con la base de datos
     @staticmethod
     def conexion():
         try:
@@ -17,9 +18,9 @@ class DataBaseProductos:
         except pymysql.MySQLError as e:
             raise ConnectionError(f"No se pudo conectar a la base de datos: {e}")
 
-
+    #Funcion para cargar todos los productos
     @staticmethod
-    def cargarProductos() -> list:
+    def cargarProductos() -> tuple:
         try:
             conn = DataBaseProductos.conexion()
             cursor = conn.cursor()
@@ -35,8 +36,8 @@ class DataBaseProductos:
             conn.close()
 
     @staticmethod
-    # Funcion para agregar un nuevo Cliente  "CREATE"
-    def agregar_producto(nombre, precio, descripcion, stock, categoria):
+    # Funcion para agregar un nuevo producto  "CREATE"
+    def agregar_producto(nombre, precio, descripcion, stock, categoria) -> bool: 
         try:
             conn = DataBaseProductos.conexion()
             cursor = conn.cursor()
@@ -53,13 +54,13 @@ class DataBaseProductos:
             conn.close()
     
     @staticmethod
-    # Funcion para mostrar clientes por id "READ"
-    def mostrar_producto_por_id(id):
+    # Funcion para mostrar producto por id "READ"
+    def mostrar_producto_por_id(id) -> tuple:
         try:
             conn = DataBaseProductos.conexion()
             cursor = conn.cursor()
-            sql = "SELECT * FROM producto WHERE id={id}"
-            cursor.execute(sql)
+            sql = "SELECT * FROM producto WHERE id=%s"
+            cursor.execute(sql, id)
             resultados = cursor.fetchall()
             return resultados
         except Error as err:
@@ -69,9 +70,8 @@ class DataBaseProductos:
             cursor.close()
             conn.close()
             
-
+    # Funcion para actualizar datos de un producto "UPDATE"
     @staticmethod
-    # Funcion para actualizar datos de un cliente "UPDATE"
     def actualizar_producto(id ,nombre_producto,precio,descripcion,stock,categoria) -> bool:
         try:
             conn = DataBaseProductos.conexion()
@@ -88,8 +88,9 @@ class DataBaseProductos:
             cursor.close()
             conn.close()
     
+    #Funcion para ordenar por nombre
     @staticmethod
-    def ordenar_por_nombre() -> list:
+    def ordenar_por_nombre() -> tuple:
         try:
             conn = DataBaseProductos.conexion()
             cursor = conn.cursor()
@@ -105,8 +106,9 @@ class DataBaseProductos:
             cursor.close()
             conn.close()
         
+    #Funcion para ordenar por precio
     @staticmethod
-    def ordenar_por_precio() -> list:
+    def ordenar_por_precio() -> tuple:
         try:
             conn = DataBaseProductos.conexion()
             cursor = conn.cursor()
@@ -122,8 +124,9 @@ class DataBaseProductos:
             cursor.close()
             conn.close()
 
+    #Funcion para ordenar por descripcion
     @staticmethod
-    def ordenar_por_descripcion() -> list:
+    def ordenar_por_descripcion() -> tuple:
         try:
             conn = DataBaseProductos.conexion()
             cursor = conn.cursor()
@@ -139,8 +142,9 @@ class DataBaseProductos:
             cursor.close()
             conn.close()
 
+    #Funcion para ordenar por stock
     @staticmethod
-    def ordenar_por_stock() -> list:
+    def ordenar_por_stock() -> tuple:
         try:
             conn = DataBaseProductos.conexion()
             cursor = conn.cursor()
@@ -156,8 +160,9 @@ class DataBaseProductos:
             cursor.close()
             conn.close()
     
+    #Funcion para ordenar por categoria la lista
     @staticmethod
-    def ordenar_por_categoria() -> list:
+    def ordenar_por_categoria() -> tuple:
         try:
             conn = DataBaseProductos.conexion()
             cursor = conn.cursor()
@@ -173,14 +178,15 @@ class DataBaseProductos:
             cursor.close()
             conn.close()
 
+    #Funcion para obtener la cantidad de ventas que tuvo cada producto
     @staticmethod
-    def mas_vendido() -> list:
+    def cant_ventas() -> tuple:
         try:
             conn = DataBaseProductos.conexion()
             cursor = conn.cursor()
-            sql = """SELECT producto.id_producto, nombre_producto, precio, categoria, SUM(cantidad_producto) AS cant_ventas
+            sql = """SELECT producto.id_producto, nombre_producto, precio, categoria, COALESCE(SUM(cantidad_producto), 0) AS cant_ventas
                      FROM producto
-                     JOIN orden_producto ON producto.id_producto = orden_producto.id_producto 
+                     LEFT JOIN orden_producto ON producto.id_producto = orden_producto.id_producto 
                      GROUP BY producto.id_producto
                      ORDER BY cant_ventas DESC"""
             cursor.execute(sql)
@@ -193,14 +199,15 @@ class DataBaseProductos:
             cursor.close()
             conn.close()
 
+    #Funcion para ordenar la lista segun la plata generada por cada producto entre todas las ordenes
     @staticmethod
-    def mas_ganancias() -> list:
+    def mas_ganancias() -> tuple:
         try:
             conn = DataBaseProductos.conexion()
             cursor = conn.cursor()
-            sql = """SELECT producto.id_producto, nombre_producto, precio, categoria, SUM(cantidad_producto) AS cant_ventas, SUM(subtotal) AS total
+            sql = """SELECT producto.id_producto, nombre_producto, precio, categoria, COALESCE(SUM(cantidad_producto), 0) AS cant_ventas, COALESCE(SUM(subtotal), 0) AS total
                      FROM producto
-                     JOIN orden_producto ON producto.id_producto = orden_producto.id_producto 
+                     LEFT JOIN orden_producto ON producto.id_producto = orden_producto.id_producto 
                      GROUP BY producto.id_producto
                      ORDER BY total DESC"""
             cursor.execute(sql)
@@ -213,14 +220,33 @@ class DataBaseProductos:
             cursor.close()
             conn.close()
     
+    #Funcion para obtener los 5 productos mas caros
     @staticmethod
-    # Funcion para eliminar un cliente "DElETE"
-    def eliminar_producto(id):
+    def cinco_mas_caros() -> tuple:
+        try:
+            conn = DataBaseProductos.conexion()
+            cursor = conn.cursor()
+            sql = """SELECT * FROM producto 
+                    ORDER BY precio DESC
+                    LIMIT 5"""
+            cursor.execute(sql)
+            resultados = cursor.fetchall()
+            return resultados
+        except Error as err:
+            print(f'Ocurrio un error con la consulta: {err}')
+            return []
+        finally:
+            cursor.close()
+            conn.close()
+    
+    @staticmethod
+    # Funcion para eliminar un producto "DElETE"
+    def eliminar_producto(id) -> bool:
         conn = DataBaseProductos.conexion()
         try:
             cursor = conn.cursor()
-            sql = f"DELETE FROM producto WHERE id_producto = {id}"
-            cursor.execute(sql)
+            sql = "DELETE FROM producto WHERE id_producto = %s"
+            cursor.execute(sql, id)
             conn.commit() 
             return True
         except Error as err:
@@ -230,10 +256,11 @@ class DataBaseProductos:
             cursor.close()
             conn.close()
 
+    #Obtener el producto mas vendido
     @staticmethod
-    def producto_mas_vendido():
+    def producto_mas_vendido() -> tuple:
         conn = DataBaseProductos.conexion()
-        cursor = conn.cursor(pymysql.cursors.DictCursor)
+        cursor = conn.cursor()
         try:
             sql = "SELECT p.nombre_producto, SUM(d.cantidad_producto) as total_vendido FROM producto p JOIN orden_producto d ON p.id_producto = d.id_producto GROUP BY p.id_producto ORDER BY total_vendido DESC LIMIT 1"
             cursor.execute(sql)

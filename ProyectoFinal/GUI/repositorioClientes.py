@@ -1,9 +1,9 @@
-import mysql.connector
 import pymysql
 from pymysql.err import Error
 
 class DataBaseClientes:
 
+    #Funcion para conectar a la base de datos
     @staticmethod
     def conexion():
         try:
@@ -17,8 +17,9 @@ class DataBaseClientes:
         except pymysql.MySQLError as e:
             raise ConnectionError(f"No se pudo conectar a la base de datos: {e}")
 
+    #Funcion para cargar los clientes
     @staticmethod
-    def cargarClientes() -> list:
+    def cargarClientes() -> tuple:
         try:
             conn = DataBaseClientes.conexion()
             cursor = conn.cursor()
@@ -33,9 +34,9 @@ class DataBaseClientes:
             cursor.close()
             conn.close()
 
-    @staticmethod
     # Funcion para agregar un nuevo Cliente  "CREATE"
-    def agregar_cliente(nombre,apellido,direccion,telefono,email):
+    @staticmethod
+    def agregar_cliente(nombre,apellido,direccion,telefono,email) -> bool:
         try:
             conn = DataBaseClientes.conexion()
             cursor = conn.cursor()
@@ -50,10 +51,10 @@ class DataBaseClientes:
         finally:
             cursor.close()
             conn.close()
-        
-    @staticmethod    
+    
     # Funcion para mostrar clientes por id "READ"
-    def mostrar_cliente_por_id(id):
+    @staticmethod    
+    def mostrar_cliente_por_id(id) -> tuple:
         try:
             conn = DataBaseClientes.conexion()
             cursor = conn.cursor()
@@ -68,10 +69,9 @@ class DataBaseClientes:
             cursor.close()
             conn.close()
             
-
-    @staticmethod
     # Funcion para actualizar datos de un cliente "UPDATE"
-    def actualizar_cliente(id,nombre,apellido,direccion,telefono,email):
+    @staticmethod
+    def actualizar_cliente(id,nombre,apellido,direccion,telefono,email) -> bool:
         try:
             conn = DataBaseClientes.conexion()
             cursor = conn.cursor()
@@ -87,8 +87,9 @@ class DataBaseClientes:
             cursor.close()
             conn.close()
 
+    #Funcion para ordenar la lista por nombre
     @staticmethod
-    def ordenar_por_nombre():
+    def ordenar_por_nombre() -> tuple:
         try:
             conn = DataBaseClientes.conexion()
             cursor = conn.cursor()
@@ -103,9 +104,10 @@ class DataBaseClientes:
         finally:
             cursor.close()
             conn.close()
-        
+    
+    #Funcion para ordenar la lista por apellido
     @staticmethod
-    def ordenar_por_apellido():
+    def ordenar_por_apellido() -> tuple:
         try:
             conn = DataBaseClientes.conexion()
             cursor = conn.cursor()
@@ -121,8 +123,9 @@ class DataBaseClientes:
             cursor.close()
             conn.close()
 
+    #Funcion para ordenar la tabla por telefono
     @staticmethod
-    def ordenar_por_telefono():
+    def ordenar_por_telefono() -> tuple:
         try:
             conn = DataBaseClientes.conexion()
             cursor = conn.cursor()
@@ -138,8 +141,9 @@ class DataBaseClientes:
             cursor.close()
             conn.close()
 
+    #Funcion para ordenar la tabla por direccion (Alfabeticamente)
     @staticmethod
-    def ordenar_por_direccion():
+    def ordenar_por_direccion() -> tuple:
         try:
             conn = DataBaseClientes.conexion()
             cursor = conn.cursor()
@@ -155,8 +159,9 @@ class DataBaseClientes:
             cursor.close()
             conn.close()
     
+    #Funcion para ordenar la tabla por email (Alfabeticamente)
     @staticmethod
-    def ordenar_por_email():
+    def ordenar_por_email() -> tuple:
         try:
             conn = DataBaseClientes.conexion()
             cursor = conn.cursor()
@@ -172,14 +177,15 @@ class DataBaseClientes:
             cursor.close()
             conn.close()
 
+    #Funcion para obtener la cantidad de compras que realizo cada cliente
     @staticmethod
-    def cantidad_compras():
+    def cantidad_compras() -> tuple:
         try:
             conn = DataBaseClientes.conexion()
             cursor = conn.cursor()
             sql = """SELECT cliente.id_cliente, nombre_cliente, apellido_cliente, COUNT(orden.id_cliente) AS cant_compras
                      FROM cliente
-                     JOIN orden ON cliente.id_cliente = orden.id_cliente 
+                     LEFT JOIN orden ON cliente.id_cliente = orden.id_cliente 
                      GROUP BY id_cliente
                      ORDER BY cant_compras DESC"""
             cursor.execute(sql)
@@ -192,15 +198,17 @@ class DataBaseClientes:
             cursor.close()
             conn.close()
 
+    #Funcion para obtener la suma total de lo que gasto cada cliente
     @staticmethod
-    def dinero_gastado():
+    def dinero_gastado() -> tuple:
         try:
             conn = DataBaseClientes.conexion()
             cursor = conn.cursor()
-            sql = """SELECT cliente.id_cliente, nombre_cliente, apellido_cliente, SUM(subtotal) AS dinero_gastado
+            #La funcion COALESCE te devuelve el primer valor no nulo, por ende si ponemos COALESCE(SUM(SUBTOTAL), 0) cuando el cliente no tenga compras y subtotal sea null va a devolver 0.
+            sql = """SELECT cliente.id_cliente, nombre_cliente, apellido_cliente, COALESCE(SUM(subtotal), 0) AS dinero_gastado  
                      FROM cliente
-                     JOIN orden ON cliente.id_cliente = orden.id_cliente
-                     JOIN orden_producto ON orden.id_orden = orden_producto.id_orden
+                     LEFT JOIN orden ON cliente.id_cliente = orden.id_cliente
+                     LEFT JOIN orden_producto ON orden.id_orden = orden_producto.id_orden
                      GROUP BY id_cliente
                      ORDER BY dinero_gastado DESC"""
             cursor.execute(sql)
@@ -214,15 +222,14 @@ class DataBaseClientes:
             conn.close()
 
     
-    
     # Funcion para eliminar un cliente "DElETE"
     @staticmethod
-    def eliminar_cliente(id):
+    def eliminar_cliente(id) -> bool:
         conn = DataBaseClientes.conexion()
         try:
             cursor = conn.cursor()
-            sql = f"DELETE FROM cliente WHERE id_cliente={id}"
-            cursor.execute(sql)
+            sql = "DELETE FROM cliente WHERE id_cliente=%s"
+            cursor.execute(sql, id)
             conn.commit()
             return True
         except Error as err:
@@ -231,4 +238,25 @@ class DataBaseClientes:
         finally:
             cursor.close()
             conn.close()
-        
+
+    #Funcion para obtener los clientes que hicieron menos de 10 compras
+    @staticmethod
+    def clientes_menos_diez() -> tuple:
+        try:
+            conn = DataBaseClientes.conexion()
+            cursor = conn.cursor()
+            sql = """SELECT cliente.id_cliente, nombre_cliente, apellido_cliente, COUNT(orden.id_cliente) AS cant_compras
+                     FROM cliente
+                     LEFT JOIN orden ON cliente.id_cliente = orden.id_cliente 
+                     GROUP BY id_cliente
+                     HAVING cant_compras < 10
+                     ORDER BY cant_compras DESC;"""
+            cursor.execute(sql)
+            resultados = cursor.fetchall()
+            return resultados
+        except Error as err:
+            print(f'Ocurrio un error con la consulta: {err}')
+            return []
+        finally:
+            cursor.close()
+            conn.close()
