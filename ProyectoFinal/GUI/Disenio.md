@@ -44,6 +44,8 @@
 - Pymysql
 - Tkinter
 - CustomTkinter
+- CTKmessagebox
+- Pillow
 
 ## Distribución de archivos:
 
@@ -67,9 +69,28 @@
 
 # Pequeña guía de la app
 
-## La aplicación consiste en un menú principal con elementos para gestionar un sistema de ventas.
+## Dependencias
 
-![Menú principal](./static/Menu.jpg)
+En el proyecto está incluido un archivo llamado `requirements.txt`, el cual se puede usar junto con el comando `pip install -r requirements.txt` para instalar todas las dependencias necesarias para el correcto funcionamiento de la app.
+
+
+## Conexión
+
+- Para conectarse a la base de datos, primero debes entrar en la carpeta de repositorios y luego abrir el archivo `Conexion_BD.py`.
+
+- ![Conexión](./static/conexion.jpg)
+
+- Una vez dentro del archivo, deberás cambiar los datos de `host`, `user`, `password` y `database` por los de tu base de datos.
+
+- ![Conexión datos](./static/conexion2.jpg)
+
+
+## Iniciar la app
+
+- La aplicación consiste en un menú principal con elementos para gestionar un sistema de ventas. 
+- Para iniciar (ya habiendo instalado y configurado todo) hay que correr el archivo `Menu.py`.
+
+- ![Menú principal](./static/Menu.jpg)
 
 ---
 
@@ -77,11 +98,11 @@
 
 - La pantalla principal del CRUD muestra una lista con los datos cargados (en caso de existir) y permite agregar o eliminar. Cuenta con un menú desplegable que permite cambiar entre la función de agregar y modificar (usando la ID del cliente/producto).
 
-![Gestión de productos](./static/Gestion_productos.jpg)  
+- ![Gestión de productos](./static/Gestion_productos.jpg)  
 
-![Gestión de clientes](./static/Gestion_cliente.jpg)  
+- ![Gestión de clientes](./static/Gestion_cliente.jpg)  
 
-![Gestión de clientes (modificar)](./static/Gestion_clienteMOD.jpg)
+- ![Gestión de clientes (modificar)](./static/Gestion_clienteMOD.jpg)
 
 ---
 
@@ -90,11 +111,11 @@
 - Permite ver las órdenes y al hacerles clic abre una ventana con los detalles.  
 - Además, permite filtrarlas o eliminarlas según la ID de la orden o la del cliente.
 
-![Procesar órdenes](./static/Procesar_ordenes.jpg)  
+- ![Procesar órdenes](./static/Procesar_ordenes.jpg)  
 
-![Detalle de una orden](./static/Procesar_ordenDetalle.jpg)  
+- ![Detalle de una orden](./static/Procesar_ordenDetalle.jpg)  
 
-![Filtrar por ID de orden](./static/Procesar_ordenID.jpg)
+- ![Filtrar por ID de orden](./static/Procesar_ordenID.jpg)
 
 ---
 
@@ -103,11 +124,11 @@
 - Permite mostrar productos y clientes, aplicando filtros preestablecidos.  
 - Si la lista no tiene filtros aplicados, se puede ordenar la tabla según sus columnas haciendo clic sobre las mismas.
 
-![Búsqueda avanzada](./static/Busqueda_avanzada.jpg)  
+- ![Búsqueda avanzada](./static/Busqueda_avanzada.jpg)  
 
-![Búsqueda avanzada con filtros Producto](./static/Busqueda_avanzadaFiltros.jpg)  
+- ![Búsqueda avanzada con filtros Producto](./static/Busqueda_avanzadaFiltros.jpg)  
 
-![Búsqueda avanzada con filtros Cliente](./static/Busqueda_avanzadaFiltros2.jpg)
+- ![Búsqueda avanzada con filtros Cliente](./static/Busqueda_avanzadaFiltros2.jpg)
 
 ---
 
@@ -115,5 +136,13 @@
 
 - No necesita explicación, simplemente abre una ventana mostrando el nombre y la cantidad de ventas del producto más vendido.
 
-![Producto más vendido](./static/Reporte_producto.jpg)
+- ![Producto más vendido](./static/Reporte_producto.jpg)
 
+---
+
+## Ajustar Cantidad Máxima
+
+- Limita la cantidad maxima que se puede comprar del producto ingresado por ID.  
+- Si existen órdenes que exceden el límite (por ejemplo, 3 auriculares y se limitó a 2), modifica la orden con el valor máximo permitido ingresado y ajusta el precio a dicha cantidad.
+
+- ![Ajustar valor](./static/Cantidad_maxima.jpg)

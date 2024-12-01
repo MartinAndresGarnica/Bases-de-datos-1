@@ -1,27 +1,13 @@
-import pymysql
+from repositorios.Conexion_BD import Conexion
 from pymysql.err import Error
 
 class DatabaseOrdenes:
-
-    #Funcion para conectar a la base de datos
-    @staticmethod
-    def conexion():
-        try:
-            conn = pymysql.connect(
-                host="localhost",
-                user="ventas",
-                password="123123123",
-                database="sist_ventas"
-            )
-            return conn
-        except pymysql.MySQLError as e:
-            raise ConnectionError(f"No se pudo conectar a la base de datos: {e}")
 
     #Funcion para cargar todas las ordenes
     @staticmethod
     def cargarOrdenes() -> tuple:
         try:
-            conn = DatabaseOrdenes.conexion()
+            conn = Conexion.conexion()
             cursor = conn.cursor()
             sql= """SELECT orden.id_orden, id_cliente, fecha, SUM(subtotal)
                     FROM orden
@@ -42,7 +28,7 @@ class DatabaseOrdenes:
     # Funcion para mostrar Ordenes por id "READ"
     def mostrar_orden_ID(id) -> tuple:
         try:
-            conn = DatabaseOrdenes.conexion()
+            conn = Conexion.conexion()
             cursor = conn.cursor()
             sql = """SELECT orden.id_orden, id_cliente, fecha, SUM(subtotal)
                     FROM orden
@@ -64,7 +50,7 @@ class DatabaseOrdenes:
     @staticmethod
     def mostrar_orden_cliente(id) -> tuple:
         try:
-            conn = DatabaseOrdenes.conexion()
+            conn = Conexion.conexion()
             cursor = conn.cursor()
             sql = """SELECT orden.id_orden, id_cliente, fecha, SUM(subtotal)
                     FROM orden
@@ -85,7 +71,7 @@ class DatabaseOrdenes:
     # Funcion para eliminar un orden "DElETE"
     @staticmethod
     def eliminar_orden(id) -> bool:
-        conn = DatabaseOrdenes.conexion()
+        conn = Conexion.conexion()
         try:
             cursor = conn.cursor()
             sql = "DELETE FROM orden WHERE id_orden = %s"
@@ -103,9 +89,9 @@ class DatabaseOrdenes:
     @staticmethod
     def detalles_orden(id) -> tuple:
         try:
-            conn = DatabaseOrdenes.conexion()
+            conn = Conexion.conexion()
             cursor = conn.cursor()
-            sql = """SELECT nombre_producto, cantidad_producto
+            sql = """SELECT nombre_producto, cantidad_producto, subtotal
                     FROM orden_producto
                     JOIN producto ON orden_producto.id_producto = producto.id_producto
                     WHERE id_orden = %s;"""
@@ -114,7 +100,7 @@ class DatabaseOrdenes:
             return resultados
         except Error as err:
             print(f'Ocurrio un error con la consutla: {err}')
-            return None
+            return []
         finally:
             cursor.close()
             conn.close()

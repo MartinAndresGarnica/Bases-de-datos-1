@@ -171,29 +171,27 @@ class DetalleOrden(ctk.CTkToplevel):
         self.grab_set()
         self.id = args[1]
         
-        # Crear frames
-        self.frameEncabezados = ctk.CTkFrame(self)
+        # Crear frame
         self.frameDetalles = ctk.CTkFrame(self)
-        
-        self.frameEncabezados.pack(fill='x')
         self.frameDetalles.pack(expand=True, fill='both')
 
         # Cargar los datos de la orden
         producto = DatabaseOrdenes.detalles_orden(self.id)
 
         if not producto:  # Validar si no hay resultados
-            ctk.CTkLabel(self.frameEncabezados, text="No se encontraron detalles para esta orden.", font=('Arial', 18)).pack()
+            ctk.CTkLabel(self.frameDetalles, text="No se encontraron detalles para esta orden.", font=('Arial', 18)).pack()
             return  # Detener la ejecución si no hay datos
 
         # Etiquetas para mostrar los encabezados
-        label_encabezadoProducto = ctk.CTkLabel(self.frameEncabezados, text='Producto', font=('Arial', 18))
-        label_encabezadoCantidad = ctk.CTkLabel(self.frameEncabezados, text='Cantidad', font=('Arial', 18))
-        label_encabezadoSubtotal = ctk.CTkLabel(self.frameEncabezados, text='Subtotal', font=('Arial', 18))
+        label_encabezadoProducto = ctk.CTkLabel(self.frameDetalles, text='Producto', font=('Arial', 18))
+        label_encabezadoCantidad = ctk.CTkLabel(self.frameDetalles, text='Cantidad', font=('Arial', 18))
+        label_encabezadoSubtotal = ctk.CTkLabel(self.frameDetalles, text='Subtotal', font=('Arial', 18))
+
 
         # Colocamos los encabezados en el grid
-        label_encabezadoProducto.grid(row=0, column=0, sticky="w", padx=30, pady=10)
-        label_encabezadoCantidad.grid(row=0, column=1, sticky="w", padx=30, pady=10)
-        label_encabezadoSubtotal.grid(row=0, column=2, sticky="e", padx=30, pady=10)
+        label_encabezadoProducto.grid(row=0, column=0, sticky="nsew", padx=30, pady=10)
+        label_encabezadoCantidad.grid(row=0, column=1, sticky="nsew", padx=30, pady=10)
+        label_encabezadoSubtotal.grid(row=0, column=2, sticky="nsew", padx=30, pady=10)
 
         # Mostrar los detalles en un grid alineado
         for i, datos in enumerate(producto):
@@ -203,7 +201,7 @@ class DetalleOrden(ctk.CTkToplevel):
             label_subtotal = ctk.CTkLabel(self.frameDetalles, text=datos[2], font=('Arial', 18))  # Subtotal
 
             # Colocamos las etiquetas de detalle en el grid, debajo de sus respectivos encabezados
-            label_producto.grid(row=i+1, column=0, sticky="w", padx=40, pady=10)
-            label_cantidad.grid(row=i+1, column=1, sticky="w", padx=40, pady=10)
-            label_subtotal.grid(row=i+1, column=2, sticky="e", padx=40, pady=10)
+            label_producto.grid(row=i+1, column=0, sticky="nsew", padx=30, pady=10)
+            label_cantidad.grid(row=i+1, column=1, sticky="nsew", padx=30, pady=10)
+            label_subtotal.grid(row=i+1, column=2, sticky="nsew", padx=30, pady=10)
 

@@ -151,8 +151,6 @@ class BusquedaAvanzada(ctk.CTkToplevel):
             elif 'DineroGastado' in args:
 
                 self.lista = DataBaseClientes.dinero_gastado()
-                list(self.lista)
-                print(self.lista)
                 #Crea la tabla
                 tabla = ttk.Treeview(self.tablas, columns=("ID_cliente", "Nombre", "Apellido", "Dinero"), show="headings")
 
