@@ -4,6 +4,7 @@ from GestionClientes import GestionClientes
 from ProcesarOrdenes import ProcesamientoOrdenes
 from BusquedaAvanzada import BusquedaAvanzada
 from ReporteProductos import ReporteProductoMasVendido
+from ModificarValor import ModificarValor
 
 class Menu(ctk.CTk):
     def __init__(self, *args, **kwargs):
@@ -62,7 +63,8 @@ class Menu(ctk.CTk):
             self.frame,
             text='Modificar valor',
             font=('Arial', 18),
-            height=80
+            height=80,
+            command=lambda: ModificarValor(self)
         )
 
         #layout

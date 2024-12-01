@@ -1,4 +1,3 @@
-import mysql.connector
 import pymysql
 from pymysql.err import Error
 
@@ -10,8 +9,8 @@ class DataBaseProductos:
         try:
             conn = pymysql.connect(
                 host="localhost",
-                user="ventas",
-                password="123123123",
+                user="root",
+                password="martin145",
                 database="sist_ventas"
             )
             return conn
@@ -258,9 +257,9 @@ class DataBaseProductos:
 
     #Obtener el producto mas vendido
     @staticmethod
-    def producto_mas_vendido() -> tuple:
+    def producto_mas_vendido():
         conn = DataBaseProductos.conexion()
-        cursor = conn.cursor()
+        cursor = conn.cursor(pymysql.cursors.DictCursor)
         try:
             sql = "SELECT p.nombre_producto, SUM(d.cantidad_producto) as total_vendido FROM producto p JOIN orden_producto d ON p.id_producto = d.id_producto GROUP BY p.id_producto ORDER BY total_vendido DESC LIMIT 1"
             cursor.execute(sql)
@@ -269,6 +268,50 @@ class DataBaseProductos:
         except pymysql.MySQLError as e:
             print(f"Error al buscar el producto más vendido: {e}")
             return None
+        finally:
+            cursor.close()
+            conn.close()
+
+        
+        
+    @staticmethod
+    def ajustar_cantidades(producto_id: int, cantidad_maxima: int) -> int:
+        conn = DataBaseProductos.conexion()
+        cursor = conn.cursor()
+        try:
+            # Actualizar las órdenes que excedan la cantidad máxima
+            sql = """
+                call AjustarCantidadProducto(%s,%s)
+            """
+            cursor.execute(sql, (producto_id, cantidad_maxima))
+            conn.commit()
+
+            # Retornar el número de filas afectadas
+            return cursor.rowcount
+        except pymysql.MySQLError as e:
+            print(f"Error al ajustar cantidades: {e}")
+            return 0
+        finally:
+            cursor.close()
+            conn.close()
+
+    @staticmethod
+    def verificar_producto_existe(producto_id: int) -> bool:
+        """
+        Verifica si un producto con el ID dado existe en la base de datos.
+        parametro --> producto_id: ID del producto a verificar.
+        return: True si el producto existe, False en caso contrario.
+        """
+        conn = DataBaseProductos.conexion()
+        cursor = conn.cursor()
+        try:
+            sql = "SELECT COUNT(*) FROM producto WHERE id_producto = %s"
+            cursor.execute(sql, (producto_id,))
+            resultado = cursor.fetchone()
+            return resultado[0] > 0
+        except pymysql.MySQLError as e:
+            print(f"Error al verificar producto: {e}")
+            return False
         finally:
             cursor.close()
             conn.close()
