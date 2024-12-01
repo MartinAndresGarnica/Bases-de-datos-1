@@ -1,7 +1,7 @@
 import customtkinter as ctk
 from tkinter import ttk
 import CTkMessagebox
-from repositorioOrdenes import DatabaseOrdenes
+from repositorios.repositorioOrdenes import DatabaseOrdenes
 
 class ProcesamientoOrdenes(ctk.CTkToplevel):
     def __init__(self, *args, **kwargs):
@@ -170,31 +170,40 @@ class DetalleOrden(ctk.CTkToplevel):
         self.resizable(0, 0)
         self.grab_set()
         self.id = args[1]
+        
+        # Crear frames
         self.frameEncabezados = ctk.CTkFrame(self)
         self.frameDetalles = ctk.CTkFrame(self)
-        self.frameDetallesIzquierda = ctk.CTkFrame(self.frameDetalles)
-        self.frameDetallesDerecha = ctk.CTkFrame(self.frameDetalles)
+        
         self.frameEncabezados.pack(fill='x')
         self.frameDetalles.pack(expand=True, fill='both')
-        self.frameDetallesIzquierda.pack(side='left', expand=True, fill='both')
-        self.frameDetallesDerecha.pack(side='left', expand=True, fill='both')
 
         # Cargar los datos de la orden
         producto = DatabaseOrdenes.detalles_orden(self.id)
 
-        # Etiquetas para mostrar los resultados
-        label_encabezadoProducto = ctk.CTkLabel(self.frameEncabezados, text='Productos', font=('Arial', 22))
-        label_encabezadoCantidad = ctk.CTkLabel(self.frameEncabezados, text='Cantidad', font=('Arial', 22))
-        label_encabezadoProducto.pack(side='left', fill='x', expand=True)
-        label_encabezadoCantidad.pack(side='left', fill='x', expand=True)
+        if not producto:  # Validar si no hay resultados
+            ctk.CTkLabel(self.frameEncabezados, text="No se encontraron detalles para esta orden.", font=('Arial', 18)).pack()
+            return  # Detener la ejecución si no hay datos
 
+        # Etiquetas para mostrar los encabezados
+        label_encabezadoProducto = ctk.CTkLabel(self.frameEncabezados, text='Producto', font=('Arial', 18))
+        label_encabezadoCantidad = ctk.CTkLabel(self.frameEncabezados, text='Cantidad', font=('Arial', 18))
+        label_encabezadoSubtotal = ctk.CTkLabel(self.frameEncabezados, text='Subtotal', font=('Arial', 18))
 
+        # Colocamos los encabezados en el grid
+        label_encabezadoProducto.grid(row=0, column=0, sticky="w", padx=30, pady=10)
+        label_encabezadoCantidad.grid(row=0, column=1, sticky="w", padx=30, pady=10)
+        label_encabezadoSubtotal.grid(row=0, column=2, sticky="e", padx=30, pady=10)
+
+        # Mostrar los detalles en un grid alineado
         for i, datos in enumerate(producto):
-            for indice, dato in enumerate(datos):
-                if indice == 0:
-                    label_titulo = ctk.CTkLabel(self.frameDetallesIzquierda, text=dato, font=('Arial', 18))
-                else:
-                    label_titulo = ctk.CTkLabel(self.frameDetallesDerecha, text=dato, font=('Arial', 18))
-                label_titulo.grid(row=i, column = indice, sticky='', padx=30, pady=15)
+            # Asumiendo que 'datos' es una tupla (producto, cantidad, subtotal)
+            label_producto = ctk.CTkLabel(self.frameDetalles, text=datos[0], font=('Arial', 18))  # Producto
+            label_cantidad = ctk.CTkLabel(self.frameDetalles, text=datos[1], font=('Arial', 18))  # Cantidad
+            label_subtotal = ctk.CTkLabel(self.frameDetalles, text=datos[2], font=('Arial', 18))  # Subtotal
 
+            # Colocamos las etiquetas de detalle en el grid, debajo de sus respectivos encabezados
+            label_producto.grid(row=i+1, column=0, sticky="w", padx=40, pady=10)
+            label_cantidad.grid(row=i+1, column=1, sticky="w", padx=40, pady=10)
+            label_subtotal.grid(row=i+1, column=2, sticky="e", padx=40, pady=10)
 

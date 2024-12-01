@@ -1,6 +1,6 @@
 import customtkinter as ctk
 import CTkMessagebox
-from repositorioProductos import DataBaseProductos
+from repositorios.repositorioProductos import DataBaseProductos
 
 
 class ModificarValor(ctk.CTkToplevel):

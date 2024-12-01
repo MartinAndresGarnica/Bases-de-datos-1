@@ -1,3 +1,4 @@
+import mysql.connector
 import pymysql
 from pymysql.err import Error
 
@@ -9,8 +10,8 @@ class DataBaseProductos:
         try:
             conn = pymysql.connect(
                 host="localhost",
-                user="martin",
-                password="123456789",
+                user="ventas",
+                password="123123123",
                 database="sist_ventas"
             )
             return conn
@@ -257,9 +258,9 @@ class DataBaseProductos:
 
     #Obtener el producto mas vendido
     @staticmethod
-    def producto_mas_vendido():
+    def producto_mas_vendido() -> tuple:
         conn = DataBaseProductos.conexion()
-        cursor = conn.cursor(pymysql.cursors.DictCursor)
+        cursor = conn.cursor()
         try:
             sql = "SELECT p.nombre_producto, SUM(d.cantidad_producto) as total_vendido FROM producto p JOIN orden_producto d ON p.id_producto = d.id_producto GROUP BY p.id_producto ORDER BY total_vendido DESC LIMIT 1"
             cursor.execute(sql)
@@ -272,8 +273,6 @@ class DataBaseProductos:
             cursor.close()
             conn.close()
 
-        
-        
     @staticmethod
     def ajustar_cantidades(producto_id: int, cantidad_maxima: int) -> int:
         conn = DataBaseProductos.conexion()

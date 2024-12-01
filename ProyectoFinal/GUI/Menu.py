@@ -1,10 +1,10 @@
 import customtkinter as ctk
-from GestionProductos import GestionProductos
-from GestionClientes import GestionClientes
-from ProcesarOrdenes import ProcesamientoOrdenes
-from BusquedaAvanzada import BusquedaAvanzada
-from ReporteProductos import ReporteProductoMasVendido
-from ModificarValor import ModificarValor
+from secciones.GestionProductos import GestionProductos
+from secciones.GestionClientes import GestionClientes
+from secciones.ProcesarOrdenes import ProcesamientoOrdenes
+from secciones.BusquedaAvanzada import BusquedaAvanzada
+from secciones.ReporteProductos import ReporteProductoMasVendido
+from secciones.ModificarValor import ModificarValor
 
 class Menu(ctk.CTk):
     def __init__(self, *args, **kwargs):
@@ -64,7 +64,7 @@ class Menu(ctk.CTk):
             text='Modificar valor',
             font=('Arial', 18),
             height=80,
-            command=lambda: ModificarValor(self)
+            command=lambda: ModificarValor()
         )
 
         #layout

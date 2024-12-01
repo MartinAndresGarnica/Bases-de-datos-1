@@ -1,5 +1,5 @@
 import customtkinter as ctk
-from repositorioProductos import DataBaseProductos
+from repositorios.repositorioProductos import DataBaseProductos
 
 class ReporteProductoMasVendido(ctk.CTkToplevel):
     def __init__(self, *args, **kwargs):
@@ -12,8 +12,8 @@ class ReporteProductoMasVendido(ctk.CTkToplevel):
         # Cargar los datos del producto más vendido
         producto = DataBaseProductos.producto_mas_vendido()
         if producto:
-            nombre_producto = producto['nombre_producto']
-            cantidad_vendida = producto['total_vendido']
+            nombre_producto = producto[0]
+            cantidad_vendida = producto[1]
         else:
             nombre_producto = "No se pudo obtener el producto"
             cantidad_vendida = "0"

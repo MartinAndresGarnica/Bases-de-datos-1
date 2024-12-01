@@ -1,13 +1,13 @@
 import customtkinter as ctk
 from tkinter import ttk
-from repositorioClientes import DataBaseClientes
-from repositorioProductos import DataBaseProductos
+from repositorios.repositorioClientes import DataBaseClientes
+from repositorios.repositorioProductos import DataBaseProductos
 
 class BusquedaAvanzada(ctk.CTkToplevel):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.geometry('1280x720')
-        self.title('Procesamiento de ordenes')
+        self.title('Busqueda avanzada')
         self.resizable(1920, 1080)
         self.grab_set()                         #Hace que la nueva ventana tenga prioridad y no se puedan clickear las demas ventanas
         self.columnconfigure(0, weight=1)
