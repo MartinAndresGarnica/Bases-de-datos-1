@@ -9,8 +9,8 @@ class DatabaseOrdenes:
         try:
             conn = pymysql.connect(
                 host="localhost",
-                user="root",
-                password="martin145",
+                user="martin",
+                password="123456789",
                 database="sist_ventas"
             )
             return conn
