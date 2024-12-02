@@ -1,3 +1,12 @@
+# <p style="text-align:center;">Trabajo practico integrado: Sistema de ventas</p>
+
+# Participantes:
+- Martin Andres Garnica
+- Thomas Emanuel Sejas
+- Franco Devaux
+
+&nbsp;
+
 # Explicación de diseño
 
 ![Menú principal](./static/Diagrama.jpg)
